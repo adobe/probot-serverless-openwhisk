@@ -22,10 +22,6 @@ If you have suggestions for how this OpenWhisk probot wrapper could be improved,
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
-## License
-
-[Apache 2.0](LICENSE) © 2018 Tobias Bocanegra <tripod@bocanegra.ch>
-
 ### Openwhisk
 
 ```
