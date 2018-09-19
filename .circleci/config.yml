@@ -37,30 +37,30 @@ jobs:
         command: npm run lint
 
     # run tests!
-#    - run: mkdir junit
-#    - run:
-#        name: prepare test git user
-#        command: git config --global user.email "you@example.com" && git config --global user.name "CircleCi Build"
-#    - run:
-#        name: Running Tests
-#        command: npx mocha --reporter mocha-junit-reporter
-#        environment:
-#          MOCHA_FILE: junit/test-results.xml
-#        when: always
+    - run: mkdir junit
+    - run:
+        name: prepare test git user
+        command: git config --global user.email "you@example.com" && git config --global user.name "CircleCi Build"
+    - run:
+        name: Running Tests
+        command: npx mocha --reporter mocha-junit-reporter
+        environment:
+          MOCHA_FILE: junit/test-results.xml
+        when: always
 
     # get code coverage
-#    - run:
-#        name: Getting Code Coverage
-#        command: npx istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec && npx codecov
-#        environment:
-#          MOCHA_FILE: junit/test-results.xml
-#        when: always
-#
-#    - store_test_results:
-#        path: junit
-#
-#    - store_artifacts:
-#        path: junit
+    - run:
+        name: Getting Code Coverage
+        command: npx istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec && npx codecov
+        environment:
+          MOCHA_FILE: junit/test-results.xml
+        when: always
+
+    - store_test_results:
+        path: junit
+
+    - store_artifacts:
+        path: junit
 
   publish-pre-release:
     docker:
