@@ -9,7 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { name, version } = require('../../package.json');
+const fs = require('fs');
+
+const { name, version } = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 module.exports = `
 <!DOCTYPE html>
