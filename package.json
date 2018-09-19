@@ -1,6 +1,6 @@
 {
   "name": "probot-servleless-openwhisk",
-  "version": "0.1.0",
+  "version": "0.1.1-pre.0",
   "description": "Probot Serverless OpenWisk",
   "license": "Apache-2.0",
   "repository": "https://github.com/tripodsan/probot-serverless-openwhisk",
