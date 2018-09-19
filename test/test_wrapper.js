@@ -16,6 +16,7 @@ const { OpenWhiskWrapper } = require('../index.js');
 
 describe('OpenWhisk Wrapper', () => {
   it('Can create the wrapper', () => {
-    const ow = new OpenWhiskWrapper();
+    // eslint-disable-next-line no-new
+    new OpenWhiskWrapper();
   });
 });
