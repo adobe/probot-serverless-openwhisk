@@ -12,7 +12,7 @@ probot app into an OpenWhisk action.
 2. Add this wrapper as dev dependency:
     ```sh
     # Add OpenWhisk wrapper as develop dependency 
-    npm add -D serverless-openwhisk
+    npm add -D probot-serverless-openwhisk
     ```
 
 3. Add an `index.js`:

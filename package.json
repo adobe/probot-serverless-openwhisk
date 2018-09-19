@@ -4,7 +4,6 @@
   "description": "Probot Serverless OpenWisk",
   "license": "Apache-2.0",
   "repository": "https://github.com/tripodsan/probot-serverless-openwhisk",
-  "homepage": "https://github.com/tripodsan/probot-serverless-openwhisk",
   "bugs": "https://github.com/tripodsan/probot-serverless-openwhisk/issues",
   "keywords": [
     "probot",
