@@ -5,6 +5,12 @@ Running a Probot app in OpenWhisk might be a bit challenging as the action invoc
 be translated into a probot event. This package offers an easy wrapper to turn an existing
 probot app into an OpenWhisk action.
 
+## Status
+[![GitHub license](https://img.shields.io/github/license/tripodsan/probot-serverless-openwhisk.svg)](https://github.com/tripodsan/probot-serverless-openwhisk/blob/master/LICENSE.txt)
+[![GitHub issues](https://img.shields.io/github/issues/tripodsan/probot-serverless-openwhisk.svg)](https://github.com/tripodsan/probot-serverless-openwhisk/issues)
+[![Greenkeeper badge](https://badges.greenkeeper.io/tripodsan/probot-serverless-openwhisk.svg)](https://greenkeeper.io/)
+[![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/tripodsan/probot-serverless-openwhisk.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tripodsan/probot-serverless-openwhisk)
+
 ## Setup
 
 1. Create a [Probot](https://probot.github.io) app following github's instructions
