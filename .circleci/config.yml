@@ -78,7 +78,7 @@ jobs:
 
     - add_ssh_keys:
         fingerprints:
-        - "40:91:c6:3a:ab:30:f0:68:e2:fd:1d:07:8c:61:d2:9a"
+        - "30:cd:0d:06:00:1f:46:62:f0:dd:af:cb:6f:a5:4f:15"
 
     - run:
         name: prepare test git user
