@@ -15,7 +15,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "lint": "./node_modules/.bin/eslint ."
+    "lint": "./node_modules/.bin/eslint .",
+    "test": "npm run lint",
+    "preversion": "npm test",
+    "postversion": "git push origin master --follow-tags"
   },
   "dependencies": {
     "archiver": "^3.0.0",
