@@ -121,9 +121,10 @@ workflows:
     - build
 
     # publish pre-releases on master
-    - publish-pre-release:
-        requires:
-        - build
-        filters:
-          branches:
-            only: master
+    # disabled until we figured out how to use 2FA with circleci
+#    - publish-pre-release:
+#        requires:
+#        - build
+#        filters:
+#          branches:
+#            only: master
