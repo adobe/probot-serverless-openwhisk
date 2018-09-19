@@ -119,7 +119,7 @@ module.exports = class OpenWhiskWrapper {
         console.log(`Received event ${id} ${name}${payload.action ? (`.${payload.action}`) : ''}`);
 
         // let probot handle the event
-        await this.probot.receive({
+        await this._probot.receive({
           name,
           payload,
         });
