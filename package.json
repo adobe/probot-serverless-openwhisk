@@ -16,38 +16,25 @@
   },
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
-    "build": "mkdir -p dist && jar cvMf dist/action.zip  package.json src index.js *.private-key.pem",
-    "deploy": "wsk action update github-app --docker tripodsan/probot-ow-nodejs8:latest --web raw -p GH_APP_ID 17488 -p GH_WEBHOOK_SECRET development dist/action.zip"
+    "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {
-    "probot": "^7.0.0"
+    "archiver": "^3.0.0",
+    "chalk": "^2.4.1",
+    "dotenv": "^6.0.0",
+    "probot": "^7.0.0",
+    "webpack": "^4.19.1"
   },
   "devDependencies": {
     "ajv": "^6.5.3",
-    "archiver": "^3.0.0",
     "eslint": "^5.4.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-header": "^2.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.11.0",
-    "jest": "^22.4.3",
-    "nodemon": "^1.17.2",
-    "smee-client": "^1.0.2",
-    "webpack": "^4.19.1"
+    "eslint-plugin-react": "^7.11.0"
   },
   "engines": {
     "node": ">= 8.3.0"
-  },
-  "jest": {
-    "testEnvironment": "node"
-  },
-  "nodemonConfig": {
-    "exec": "npm start",
-    "watch": [
-      ".env",
-      "."
-    ]
   }
 }

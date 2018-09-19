@@ -15,18 +15,20 @@
 const { createProbot } = require('probot');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
-const defaultRobotRoute = require('./views/default');
+const defaultRoute = require('./views/default');
 
 const ERROR = {
   statusCode: 500,
   body: 'Internal Server Error.',
 };
 
+require('dotenv').config();
+
 module.exports = class OpenWhiskWrapper {
   constructor() {
     this._handler = null;
     this._routes = {
-      '/robot': defaultRobotRoute,
+      default: defaultRoute,
     };
     this._appId = null;
     this._secret = null;
@@ -76,27 +78,26 @@ module.exports = class OpenWhiskWrapper {
       } = params;
 
       // check for the routes
-      if (method === 'get' && this._routes[path]) {
+      if (method === 'get' && !body) {
+        let route = 'default';
+        if (this._routes[path]) {
+          route = path;
+        }
         return {
           statusCode: 200,
           headers: {
             'Content-Type': 'text/html',
           },
-          body: this._routes[path],
+          body: this._routes[route],
         };
       }
 
-      if (!body) {
-        console.error('empty payload');
-        return ERROR;
+      // set APP_ID and WEBHOOK_SECRET if defined via params
+      if (!this._appId) {
+        this._appId = params.GH_APP_ID || process.env.APP_ID;
       }
-
-      // set APP_ID and WEBHOOT_SECRET if defined via params
-      if (params.GH_APP_ID) {
-        this._appId = params.GH_APP_ID;
-      }
-      if (params.GH_WEBHOOK_SECRET) {
-        this._secret = params.GH_WEBHOOK_SECRET;
+      if (!this._secret) {
+        this._secret = params.GH_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
       }
 
       // console.log('intializing probot...');
