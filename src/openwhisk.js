@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-console,no-underscore-dangle */
+/* eslint-disable no-underscore-dangle */
 
 const { createProbot } = require('probot');
+const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
 const defaultRoute = require('./views/default');
@@ -21,8 +22,6 @@ const ERROR = {
   statusCode: 500,
   body: 'Internal Server Error.',
 };
-
-require('dotenv').config();
 
 module.exports = class OpenWhiskWrapper {
   constructor() {
@@ -83,6 +82,7 @@ module.exports = class OpenWhiskWrapper {
         if (this._routes[path]) {
           route = path;
         }
+        logger.info('Serving: %s', route);
         return {
           statusCode: 200,
           headers: {
@@ -100,11 +100,11 @@ module.exports = class OpenWhiskWrapper {
         this._secret = params.GH_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
       }
 
-      // console.log('intializing probot...');
+      logger.debug('intializing probot...');
       try {
         this.initProbot();
       } catch (e) {
-        console.error(`Error while loading probot: ${e.stack || e}`);
+        logger.error(`Error while loading probot: ${e.stack || e}`);
         return ERROR;
       }
 
@@ -116,7 +116,7 @@ module.exports = class OpenWhiskWrapper {
         const id = headers['x-github-delivery'];
         const payload = JSON.parse(Buffer.from(body, 'base64').toString('utf8'));
 
-        console.log(`Received event ${id} ${name}${payload.action ? (`.${payload.action}`) : ''}`);
+        logger.info(`Received event ${id} ${name}${payload.action ? (`.${payload.action}`) : ''}`);
 
         // let probot handle the event
         await this._probot.receive({
@@ -130,7 +130,7 @@ module.exports = class OpenWhiskWrapper {
           }),
         };
       } catch (err) {
-        console.error(err);
+        logger.error(err);
         return ERROR;
       }
     };

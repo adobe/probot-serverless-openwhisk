@@ -34,6 +34,8 @@ class ActionBuilder {
     this._wskNamespace = null;
     this._externals = [
       /^probot(\/.*)?$/,
+      'probot-commands',
+      'dotenv',
     ];
     this._docker = 'tripodsan/probot-ow-nodejs8:latest';
   }
@@ -114,7 +116,8 @@ class ActionBuilder {
       };
 
       archive.pipe(output);
-      archive.file(this._bundle, { name: 'main.js' });
+      archive.file(this._bundle, { name: 'app.js' });
+      archive.file(path.resolve(__dirname, 'main.js'), { name: 'main.js' });
       if (typeof this._privateKey === 'string') {
         archive.file(this._privateKey, { name: 'private-key.pem' });
       } else {
