@@ -53,7 +53,69 @@ probot app into an OpenWhisk action.
 
 ## CLI
 
-The command line interface `wskbot` doesn't take any arguments at the moment. 
+The command line interface `wskbot` can either be invoked via `./node_modules/.bin/wskbot`. 
+you can also use npx: `npx wskbot` or install it globally `npm install -g probot-serverless-openwhisk`.
+
+```
+$ wskbot --help
+Options:
+  --version            Show version number                             [boolean]
+  --verbose, -v
+  --deploy             Automatically deploy to OpenWhisk
+  --test               Invoke action after deployment
+  --hints, --no-hints  Show action and github app settings       [default: true]
+  --help               Show help                                       [boolean]
+
+for more information, find our manual at
+https://github.com/tripodsan/probot-serverless-openwhisk
+```
+
+With no arguments,the `wskbot` just bundles your code into the respective `action.zip`:
+
+```
+$ wskbot
+ok: created action: dist/probot-openwhisk-example.zip.
+Deploy to openwhisk the following command or specify --deploy on the commandline:
+$ wsk action update probot-openwhisk-example --docker tripodsan/probot-ow-nodejs8:latest --web raw dist/probot-openwhisk-example.zip
+
+Githup App Settings:
+Homepage URL: https://adobeioruntime.net/api/v1/web/tripod/default/probot-openwhisk-example/probot
+ Webhook URL: https://adobeioruntime.net/api/v1/web/tripod/default/probot-openwhisk-example
+```
+
+### Automatically deploy to openwhisk
+
+When given the `--deploy`, the `wskbot` will try to deploy it ot OpenWhisk using the settings from
+`~/.wskprops`. Alternatively, you can also set the `WSK_NAMESPACE`, `WSK_AUTH`, `WSK_APIHOST` in your
+environment or `.env` file.
+
+```
+$ wskbot --deploy --no-hints
+ok: created action: dist/probot-openwhisk-example.zip.
+ok: updated action tripod/probot-openwhisk-example
+```  
+
+### Automatically _test_ the deployed action
+
+In order to quickly test the deployed action, `wskbot` can send a `GET` request to the action url.
+
+```
+$ wskbot --deploy --no-hints --test
+ok: created action: dist/probot-openwhisk-example.zip.
+ok: updated action tripod/probot-openwhisk-example
+--: requesting: https://runtime.adobe.io/api/v1/web/tripod/default/probot-openwhisk-example ...
+ok: 200
+```
+
+..or sometimes:
+
+```
+$ wskbot --deploy --no-hints --test
+ok: created action: dist/probot-openwhisk-example.zip.
+ok: updated action tripod/probot-openwhisk-example
+--: requesting: https://runtime.adobe.io/api/v1/web/tripod/default/probot-openwhisk-example ...
+error:  400 - "{\n  \"error\": \"Response is not valid 'message/http'.\",\n  \"code\": \"av6qzDTHdgd5dfg7WOynEjbVnTdE5JhnB4c\"\n}"
+```
 
 ## Notes
 
