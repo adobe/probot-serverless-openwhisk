@@ -203,7 +203,7 @@ module.exports = class ActionBuilder {
     const openwhisk = ow({
       apihost: this._wskApiHost,
       api_key: this._wskAuth,
-      namespace: this._wskNamespace
+      namespace: this._wskNamespace,
     });
 
 
