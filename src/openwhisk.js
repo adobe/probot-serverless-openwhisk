@@ -61,14 +61,14 @@ module.exports = class OpenWhiskWrapper {
     return this;
   }
 
-  initProbot() {
+  initProbot(params) {
     const options = {
       id: this._appId,
       secret: this._secret,
       cert: findPrivateKey(),
     };
     this._probot = createProbot(options);
-    this._probot.load(this._handler);
+    this._probot.load(app => this._handler(app, params));
   }
 
   create() {
@@ -117,13 +117,11 @@ module.exports = class OpenWhiskWrapper {
 
       logger.debug('intializing probot...');
       try {
-        this.initProbot();
+        this.initProbot(params);
       } catch (e) {
         logger.error(`Error while loading probot: ${e.stack || e}`);
         return ERROR;
       }
-
-      // console.log('intializing probot...done.');
 
       try {
         // gather the event data
