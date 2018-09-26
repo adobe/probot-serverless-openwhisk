@@ -30,6 +30,11 @@ const { argv } = yargs
     description: 'Show action and github app settings',
     default: true,
   })
+  .option('static', {
+    alias: 's',
+    description: 'Includes a static file into the archive',
+    type: 'array',
+  })
   .epilogue('for more information, find our manual at https://github.com/tripodsan/probot-serverless-openwhisk')
   .help();
 
@@ -38,5 +43,6 @@ new ActionBuilder()
   .withDeploy(argv.deploy)
   .withTest(argv.test)
   .withHints(argv.hints)
+  .withStatic(argv.static)
   .run()
   .catch(console.error);

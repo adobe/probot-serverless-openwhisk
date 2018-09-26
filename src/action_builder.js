@@ -49,12 +49,14 @@ module.exports = class ActionBuilder {
     this._externals = [
       /^probot(\/.*)?$/,
       'probot-commands',
+      'fs-extra',
       'dotenv',
     ];
     this._docker = 'tripodsan/probot-ow-nodejs8:latest';
     this._deploy = false;
     this._test = false;
     this._showHints = false;
+    this._statics = new Map();
   }
 
   verbose(enable) {
@@ -75,6 +77,17 @@ module.exports = class ActionBuilder {
 
   withHints(showHints) {
     this._showHints = showHints;
+    return this;
+  }
+
+  withStatic(srcPath, dstRelPath) {
+    if (Array.isArray(srcPath)) {
+      srcPath.forEach((v) => {
+        this._statics.set(v, v);
+      });
+    } else {
+      this._statics.set(srcPath, dstRelPath);
+    }
     return this;
   }
 
@@ -164,6 +177,10 @@ module.exports = class ActionBuilder {
       if (fs.existsSync(this._env)) {
         archive.file(this._env, { name: '.env' });
       }
+      this._statics.forEach((src, name) => {
+        archive.file(src, { name });
+      });
+
       archive.append(JSON.stringify(packageJson, null, '  '), { name: 'package.json' });
       archive.finalize();
     });
