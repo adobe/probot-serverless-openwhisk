@@ -32,6 +32,24 @@ const log = {
   error: console.error,
 };
 
+function decodeParams(p) {
+  // check if file
+  let content = p;
+  if (fs.existsSync(p)) {
+    content = fs.readFileSync(p, 'utf-8');
+  }
+
+  // first try JSON
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    // ignore
+  }
+
+  // then try env
+  return dotenv.parse(Buffer.from(content));
+}
+
 module.exports = class ActionBuilder {
   constructor() {
     this._cwd = process.cwd();
@@ -59,6 +77,7 @@ module.exports = class ActionBuilder {
     this._test = false;
     this._showHints = false;
     this._statics = new Map();
+    this._params = {};
   }
 
   verbose(enable) {
@@ -93,6 +112,20 @@ module.exports = class ActionBuilder {
       });
     } else {
       this._statics.set(srcPath, dstRelPath);
+    }
+    return this;
+  }
+
+  withParams(params) {
+    if (!params) {
+      return this;
+    }
+    if (Array.isArray(params)) {
+      params.forEach((v) => {
+        this._params = Object.assign(this._params, decodeParams(v));
+      });
+    } else {
+      this._params = Object.assign(this._params, decodeParams(params));
     }
     return this;
   }
@@ -174,7 +207,7 @@ module.exports = class ActionBuilder {
 
       archive.pipe(output);
       archive.file(this._bundle, { name: 'app.js' });
-      archive.file(path.resolve(__dirname, 'main.js'), { name: 'main.js' });
+      archive.file(path.resolve(__dirname, '..', 'main.js'), { name: 'main.js' });
       if (typeof this._privateKey === 'string') {
         archive.file(this._privateKey, { name: 'private-key.pem' });
       } else {

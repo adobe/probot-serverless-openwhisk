@@ -11,7 +11,7 @@
     "openwhisk"
   ],
   "bin": {
-    "wskbot": "src/cli.js"
+    "wskbot": "src/cli/index.js"
   },
   "main": "index.js",
   "scripts": {
