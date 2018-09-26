@@ -50,6 +50,8 @@ module.exports = class ActionBuilder {
       /^probot(\/.*)?$/,
       'probot-commands',
       'fs-extra',
+      'js-yaml',
+      'openpgp',
       'dotenv',
     ];
     this._docker = 'tripodsan/probot-ow-nodejs8:latest';
@@ -81,6 +83,10 @@ module.exports = class ActionBuilder {
   }
 
   withStatic(srcPath, dstRelPath) {
+    if (!srcPath) {
+      return this;
+    }
+
     if (Array.isArray(srcPath)) {
       srcPath.forEach((v) => {
         this._statics.set(v, v);
