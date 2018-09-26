@@ -23,6 +23,8 @@ const os = require('os');
 const ow = require('openwhisk');
 const request = require('request-promise-native');
 
+require('dotenv').config();
+
 // poor men's logging...
 let verbose = false;
 const log = {
@@ -32,25 +34,36 @@ const log = {
   error: console.error,
 };
 
-function decodeParams(p) {
-  // check if file
-  let content = p;
-  if (fs.existsSync(p)) {
-    content = fs.readFileSync(p, 'utf-8');
-  }
-
-  // first try JSON
-  try {
-    return JSON.parse(content);
-  } catch (e) {
-    // ignore
-  }
-
-  // then try env
-  return dotenv.parse(Buffer.from(content));
-}
+const GITHUB_PRIVATE_KEY_FILE = 'github-private-key.pem';
 
 module.exports = class ActionBuilder {
+
+  static decodeParams(p) {
+    // check if file
+    let content = p;
+    if (fs.existsSync(p)) {
+      content = fs.readFileSync(p, 'utf-8');
+    }
+
+    // first try JSON
+    try {
+      return JSON.parse(content);
+    } catch (e) {
+      // ignore
+    }
+
+    // then try env
+    return dotenv.parse(content);
+  }
+
+  static toEnv(obj) {
+    let str = '';
+    Object.keys(obj).forEach((k) => {
+      str += `${k}=${JSON.stringify(obj[k])}\n`;
+    });
+    return str;
+  }
+
   constructor() {
     this._cwd = process.cwd();
     this._distDir = null;
@@ -122,10 +135,10 @@ module.exports = class ActionBuilder {
     }
     if (Array.isArray(params)) {
       params.forEach((v) => {
-        this._params = Object.assign(this._params, decodeParams(v));
+        this._params = Object.assign(this._params, ActionBuilder.decodeParams(v));
       });
     } else {
-      this._params = Object.assign(this._params, decodeParams(params));
+      this._params = Object.assign(this._params, ActionBuilder.decodeParams(params));
     }
     return this;
   }
@@ -209,13 +222,20 @@ module.exports = class ActionBuilder {
       archive.file(this._bundle, { name: 'app.js' });
       archive.file(path.resolve(__dirname, '..', 'main.js'), { name: 'main.js' });
       if (typeof this._privateKey === 'string') {
-        archive.file(this._privateKey, { name: 'private-key.pem' });
+        archive.file(this._privateKey, { name: GITHUB_PRIVATE_KEY_FILE });
       } else {
-        archive.append(this._privateKey, { name: 'private-key.pem' });
+        archive.append(this._privateKey, { name: GITHUB_PRIVATE_KEY_FILE });
       }
+
+      // process and generate the .env file
+      let env = {};
       if (fs.existsSync(this._env)) {
-        archive.file(this._env, { name: '.env' });
+        env = dotenv.parse(fs.readFileSync(this._env));
+        delete env.PRIVATE_KEY;
       }
+      env.PRIVATE_KEY_PATH = GITHUB_PRIVATE_KEY_FILE;
+      archive.append(ActionBuilder.toEnv(env), { name: '.env' });
+
       this._statics.forEach((src, name) => {
         archive.file(src, { name });
       });
