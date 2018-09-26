@@ -23,9 +23,9 @@ const ERROR = {
   body: 'Internal Server Error.',
 };
 
-const isFunction = function(obj) {
+function isFunction(obj) {
   return !!(obj && obj.constructor && obj.call && obj.apply);
-};
+}
 
 module.exports = class OpenWhiskWrapper {
   constructor() {
