@@ -23,6 +23,10 @@ const ERROR = {
   body: 'Internal Server Error.',
 };
 
+const isFunction = function(obj) {
+  return !!(obj && obj.constructor && obj.call && obj.apply);
+};
+
 module.exports = class OpenWhiskWrapper {
   constructor() {
     this._handler = null;
@@ -83,13 +87,24 @@ module.exports = class OpenWhiskWrapper {
           route = path;
         }
         logger.info('Serving: %s', route);
-        return {
-          statusCode: 200,
-          headers: {
-            'Content-Type': 'text/html',
-          },
-          body: this._routes[route],
-        };
+
+        let view = this._routes[path];
+        if (isFunction(view)) {
+          view = view();
+        }
+        if (view.then) {
+          view = await view;
+        }
+        if (typeof view === 'string') {
+          view = {
+            statusCode: 200,
+            headers: {
+              'Content-Type': 'text/html',
+            },
+            view,
+          };
+        }
+        return view;
       }
 
       // set APP_ID and WEBHOOK_SECRET if defined via params
