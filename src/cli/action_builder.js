@@ -37,7 +37,6 @@ const log = {
 const GITHUB_PRIVATE_KEY_FILE = 'github-private-key.pem';
 
 module.exports = class ActionBuilder {
-
   static decodeParams(p) {
     // check if file
     let content = p;
@@ -296,6 +295,7 @@ module.exports = class ActionBuilder {
         'web-export': true,
         'raw-http': true,
       },
+      params: this._params,
     };
     const result = await openwhisk.actions.update(actionoptions);
     log.info(`${chalk.green('ok:')} updated action ${chalk.whiteBright(`${result.namespace}/${result.name}`)}`);
