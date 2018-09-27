@@ -36,6 +36,7 @@ module.exports = class OpenWhiskWrapper {
     this._appId = null;
     this._secret = null;
     this._privateKey = null;
+    this._errors = [];
   }
 
   withHandler(handler) {
@@ -75,9 +76,27 @@ module.exports = class OpenWhiskWrapper {
       id: this._appId,
       secret: this._secret,
       cert: this._privateKey,
+      catchErrors: false,
     };
     this._probot = createProbot(options);
-    this._probot.load(app => this._handler(app, params));
+    this._probot.load((app) => {
+      const appOn = app.on;
+      // the eventemmitter does not properly propagate errors thrown in the listeners
+      // so we intercept the registration and wrap it with our own logic.
+      // eslint-disable-next-line no-param-reassign
+      app.on = (eventName, listener) => {
+        const wrapper = async (...args) => {
+          try {
+            return await listener.apply(this._handler, args);
+          } catch (e) {
+            this._errors.push(e);
+            throw e;
+          }
+        };
+        return appOn.call(app, eventName, wrapper);
+      };
+      this._handler(app, params);
+    });
   }
 
   create() {
@@ -145,6 +164,9 @@ module.exports = class OpenWhiskWrapper {
           name,
           payload,
         });
+        if (this._errors.length > 0) {
+          return ERROR;
+        }
         return {
           statusCode: 200,
           body: JSON.stringify({
