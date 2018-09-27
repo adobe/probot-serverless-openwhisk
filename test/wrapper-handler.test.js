@@ -18,7 +18,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { OpenWhiskWrapper } = require('../index.js');
 
-const PRIVATE_KEY_PATH = path.resolve(__dirname, 'fixtures', 'test-private-key.pem');
+const PRIVATE_KEY_PATH = path.resolve(__dirname, 'fixtures', 'test-private-key-pem.txt');
 const PAYLOAD_ISSUES_OPENED = path.resolve(__dirname, 'fixtures', 'issues.opened.json');
 
 class TestHandler {
