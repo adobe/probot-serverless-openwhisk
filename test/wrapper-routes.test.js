@@ -16,12 +16,7 @@
 const assert = require('assert');
 const { OpenWhiskWrapper } = require('../index.js');
 
-describe('OpenWhisk Wrapper', () => {
-  it('Can create the wrapper', () => {
-    // eslint-disable-next-line no-new
-    new OpenWhiskWrapper();
-  });
-
+describe('OpenWhisk Wrapper - Routes', () => {
   it('Can deliver static template', async () => {
     // eslint-disable-next-line no-new
     const main = new OpenWhiskWrapper()
@@ -83,6 +78,43 @@ describe('OpenWhisk Wrapper', () => {
       body: 'Hello, world.',
       headers: {
         'Content-Type': 'text/plain',
+      },
+      statusCode: 200,
+    });
+  });
+
+  it('Can deliver default view', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey('dummy')
+      .withHandler({})
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/whatever',
+    });
+
+    assert.ok(/.*probot-serverless-openwhisk.*/.test(result.body));
+  });
+
+  it('Can overwrite default view', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withRoute('default', require('./fixtures/template-string.js'))
+      .withGithubPrivateKey('dummy')
+      .withHandler({})
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/',
+    });
+
+    assert.deepEqual(result, {
+      body: 'Hello, world.',
+      headers: {
+        'Content-Type': 'text/html',
       },
       statusCode: 200,
     });

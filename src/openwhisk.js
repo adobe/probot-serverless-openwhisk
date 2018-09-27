@@ -97,7 +97,7 @@ module.exports = class OpenWhiskWrapper {
         }
         logger.info('Serving: %s', route);
 
-        let view = this._routes[path];
+        let view = this._routes[route];
         if (isFunction(view)) {
           view = view();
         }
