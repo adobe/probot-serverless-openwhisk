@@ -35,6 +35,7 @@ module.exports = class OpenWhiskWrapper {
     };
     this._appId = null;
     this._secret = null;
+    this._privateKey = null;
   }
 
   withHandler(handler) {
@@ -61,11 +62,19 @@ module.exports = class OpenWhiskWrapper {
     return this;
   }
 
+  withGithubPrivateKey(key) {
+    this._privateKey = key;
+    return this;
+  }
+
   initProbot(params) {
+    if (!this._privateKey) {
+      this._privateKey = findPrivateKey();
+    }
     const options = {
       id: this._appId,
       secret: this._secret,
-      cert: findPrivateKey(),
+      cert: this._privateKey,
     };
     this._probot = createProbot(options);
     this._probot.load(app => this._handler(app, params));
@@ -101,7 +110,7 @@ module.exports = class OpenWhiskWrapper {
             headers: {
               'Content-Type': 'text/html',
             },
-            view,
+            body: view,
           };
         }
         return view;

@@ -11,12 +11,80 @@
  */
 
 /* eslint-env mocha */
+/* eslint-disable global-require */
 
+const assert = require('assert');
 const { OpenWhiskWrapper } = require('../index.js');
 
 describe('OpenWhisk Wrapper', () => {
   it('Can create the wrapper', () => {
     // eslint-disable-next-line no-new
     new OpenWhiskWrapper();
+  });
+
+  it('Can deliver static template', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withRoute('/static.txt', require('./fixtures/template-string.js'))
+      .withGithubPrivateKey('dummy')
+      .withHandler({})
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/static.txt',
+    });
+
+    assert.deepEqual(result, {
+      body: 'Hello, world.',
+      headers: {
+        'Content-Type': 'text/html',
+      },
+      statusCode: 200,
+    });
+  });
+
+  it('Can deliver async function template', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withRoute('/static.txt', require('./fixtures/template-async-func.js'))
+      .withGithubPrivateKey('dummy')
+      .withHandler({})
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/static.txt',
+    });
+
+    assert.deepEqual(result, {
+      body: 'Hello, world.',
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      statusCode: 200,
+    });
+  });
+
+  it('Can deliver static function template', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withRoute('/static.txt', require('./fixtures/template-static-func.js'))
+      .withGithubPrivateKey('dummy')
+      .withHandler({})
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/static.txt',
+    });
+
+    assert.deepEqual(result, {
+      body: 'Hello, world.',
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      statusCode: 200,
+    });
   });
 });
