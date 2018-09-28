@@ -83,6 +83,7 @@ module.exports = class ActionBuilder {
       'js-yaml',
       'openpgp',
       'dotenv',
+      'axios',
     ];
     this._docker = 'tripodsan/probot-ow-nodejs8:latest';
     this._deploy = false;
