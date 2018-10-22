@@ -78,6 +78,28 @@ describe('OpenWhisk Wrapper - Handler', () => {
     });
   });
 
+  it('invokes 2 handlers', async () => {
+    const testHandler1 = new TestHandler();
+    const testHandler2 = new TestHandler();
+
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
+      .withHandler(testHandler1.invoker())
+      .withHandler(testHandler2.invoker())
+      .create();
+
+    const result = await main(await createTestPayload());
+
+    assert.ok(testHandler1.invoked);
+    assert.equal(testHandler1.testParam, 'test-param');
+    assert.ok(testHandler2.invoked);
+    assert.equal(testHandler2.testParam, 'test-param');
+    assert.deepEqual(result, {
+      body: '{"message":"ok"}',
+      statusCode: 200,
+    });
+  });
+
   it('invokes the resolved handler', async () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
@@ -134,18 +156,6 @@ describe('OpenWhisk Wrapper - Handler', () => {
 
     assert.ok(wrapper._appId, '1234');
     assert.ok(wrapper._secret, 'test');
-  });
-
-  it('init probot fails with error', async () => {
-    const wrapper = new OpenWhiskWrapper();
-
-    const payload = await createTestPayload({});
-    try {
-      await wrapper.create()(payload);
-      assert.fail('must fail');
-    } catch (e) {
-      // ok
-    }
   });
 
   it('error during init probot sends 500', async () => {

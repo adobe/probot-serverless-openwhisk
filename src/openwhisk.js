@@ -29,7 +29,7 @@ function isFunction(obj) {
 
 module.exports = class OpenWhiskWrapper {
   constructor() {
-    this._handler = null;
+    this._handlers = null;
     this._routes = {
       default: defaultRoute,
     };
@@ -40,10 +40,13 @@ module.exports = class OpenWhiskWrapper {
   }
 
   withHandler(handler) {
+    if (!this._handlers) {
+      this._handlers = [];
+    }
     if (typeof handler === 'string') {
-      this._handler = resolve(handler);
+      this._handlers.push(resolve(handler));
     } else {
-      this._handler = handler;
+      this._handlers.push(handler);
     }
     return this;
   }
@@ -95,7 +98,9 @@ module.exports = class OpenWhiskWrapper {
         };
         return appOn.call(app, eventName, wrapper);
       };
-      this._handler(app, params);
+      this._handlers.forEach((handler) => {
+        handler(app, params);
+      });
     });
   }
 
