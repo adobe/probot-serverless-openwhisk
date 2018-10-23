@@ -37,10 +37,13 @@ const log = {
 const GITHUB_PRIVATE_KEY_FILE = 'github-private-key.pem';
 
 module.exports = class ActionBuilder {
-  static decodeParams(p) {
+  static decodeParams(p, isFile) {
     // check if file
     let content = p;
-    if (fs.existsSync(p)) {
+    if (isFile) {
+      if (!fs.existsSync(p)) {
+        throw Error(`Specified param file does not exsit: ${p}`);
+      }
       content = fs.readFileSync(p, 'utf-8');
     }
 
@@ -129,18 +132,22 @@ module.exports = class ActionBuilder {
     return this;
   }
 
-  withParams(params) {
+  withParams(params, forceFile) {
     if (!params) {
       return this;
     }
     if (Array.isArray(params)) {
       params.forEach((v) => {
-        this._params = Object.assign(this._params, ActionBuilder.decodeParams(v));
+        this._params = Object.assign(this._params, ActionBuilder.decodeParams(v, forceFile));
       });
     } else {
-      this._params = Object.assign(this._params, ActionBuilder.decodeParams(params));
+      this._params = Object.assign(this._params, ActionBuilder.decodeParams(params, forceFile));
     }
     return this;
+  }
+
+  withParamsFile(params) {
+    return this.withParams(params, true);
   }
 
   validate() {

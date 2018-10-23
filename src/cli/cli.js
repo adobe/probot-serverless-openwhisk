@@ -44,7 +44,13 @@ class CLI {
       })
       .option('params', {
         alias: 'p',
-        description: 'Include the given action param. Can be a file or a string; can be json or env.',
+        description: 'Include the given action param. can be json or env.',
+        type: 'array',
+        default: [],
+      })
+      .option('params-file', {
+        alias: 'f',
+        description: 'Include the given action param from a file; can be json or env.',
         type: 'array',
         default: [],
       })
@@ -60,7 +66,8 @@ class CLI {
       .withTest(argv.test)
       .withHints(argv.hints)
       .withStatic(argv.static)
-      .withParams(argv.params);
+      .withParams(argv.params)
+      .withParamsFile(argv.paramsFile);
 
     if (!this._noRun) {
       builder

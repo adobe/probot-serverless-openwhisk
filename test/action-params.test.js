@@ -59,9 +59,20 @@ describe('Action Builder Test - Params', () => {
     });
   });
 
+  it('fail for missing params file', () => {
+    let error = null;
+    try {
+      new ActionBuilder()
+        .withParamsFile(path.resolve(__dirname, 'fixtures', 'params-test-missing.env'));
+    } catch (e) {
+      error = e;
+    }
+    assert.notEqual(error, null, 'missing params-file must fail');
+  });
+
   it('can set params from env file', () => {
     const a = new ActionBuilder()
-      .withParams(path.resolve(__dirname, 'fixtures', 'params-test.env'));
+      .withParamsFile(path.resolve(__dirname, 'fixtures', 'params-test.env'));
 
     assert.deepEqual(a._params, {
       EXPIRES: 'false',
@@ -71,7 +82,7 @@ describe('Action Builder Test - Params', () => {
 
   it('can set params from json file', () => {
     const a = new ActionBuilder()
-      .withParams(path.resolve(__dirname, 'fixtures', 'params-test.json'));
+      .withParamsFile(path.resolve(__dirname, 'fixtures', 'params-test.json'));
 
     assert.deepEqual(a._params, {
       jobs: [
@@ -88,6 +99,8 @@ describe('Action Builder Test - Params', () => {
       .withParams([
         '{"KEY": "123"}',
         'TOKEN=abc',
+      ])
+      .withParamsFile([
         path.resolve(__dirname, 'fixtures', 'params-test.env'),
         path.resolve(__dirname, 'fixtures', 'params-test.json'),
       ]);
