@@ -42,7 +42,7 @@ module.exports = class ActionBuilder {
     let content = p;
     if (isFile) {
       if (!fs.existsSync(p)) {
-        throw Error(`Specified param file does not exsit: ${p}`);
+        throw Error(`Specified param file does not exist: ${p}`);
       }
       content = fs.readFileSync(p, 'utf-8');
     }
@@ -148,6 +148,11 @@ module.exports = class ActionBuilder {
 
   withParamsFile(params) {
     return this.withParams(params, true);
+  }
+
+  withGithubPrivateKey(key) {
+    this._privateKey = key;
+    return this;
   }
 
   validate() {

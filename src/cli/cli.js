@@ -54,6 +54,9 @@ class CLI {
         type: 'array',
         default: [],
       })
+      .option('github-key', {
+        description: 'Specify the GitHub private key file',
+      })
       .epilogue('for more information, find our manual at https://github.com/tripodsan/probot-serverless-openwhisk')
       .help();
   }
@@ -67,7 +70,8 @@ class CLI {
       .withHints(argv.hints)
       .withStatic(argv.static)
       .withParams(argv.params)
-      .withParamsFile(argv.paramsFile);
+      .withParamsFile(argv.paramsFile)
+      .withGithubPrivateKey(argv.githubKey);
 
     if (!this._noRun) {
       builder
