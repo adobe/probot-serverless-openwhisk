@@ -84,7 +84,7 @@ module.exports = class ActionBuilder {
       'probot-commands',
       'fs-extra',
       'js-yaml',
-      'openpgp',
+      '@tripod/openpgp',
       'dotenv',
       'axios',
     ];
