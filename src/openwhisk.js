@@ -12,6 +12,7 @@
 
 /* eslint-disable no-underscore-dangle */
 
+const crypto = require('crypto');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
@@ -25,6 +26,30 @@ const ERROR = {
 
 function isFunction(obj) {
   return !!(obj && obj.constructor && obj.call && obj.apply);
+}
+
+/**
+ * Validate if the payload is valid.
+ * @param secret the webhook secret
+ * @param payload the payload body
+ * @param signature the signature of the POST
+ * @throws Error if the payload is not valid.
+ */
+function validatePayload(secret, payload = '', signature) {
+  if (!signature) {
+    throw Error('signature required');
+  }
+  if (!secret) {
+    throw Error('secret required');
+  }
+  const sig = signature.split('=');
+  if (sig.length !== 2) {
+    throw Error('invalid signature format.');
+  }
+  const signed = crypto.createHmac(sig[0], secret).update(payload, 'utf-8').digest();
+  if (!crypto.timingSafeEqual(signed, Buffer.from(sig[1], 'hex'))) {
+    throw Error('signature not valid.');
+  }
 }
 
 module.exports = class OpenWhiskWrapper {
@@ -148,6 +173,16 @@ module.exports = class OpenWhiskWrapper {
         this._secret = params.GH_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
       }
 
+      // validate webhook
+      const payloadBody = Buffer.from(body, 'base64').toString('utf8');
+      try {
+        validatePayload(this._secret, payloadBody, headers['x-hub-signature']);
+      } catch (e) {
+        logger.error(`Error validating payload: ${e.message}`);
+        return ERROR;
+      }
+      logger.debug('payload signature valid.');
+
       logger.debug('intializing probot...');
       try {
         this.initProbot(params);
@@ -160,7 +195,7 @@ module.exports = class OpenWhiskWrapper {
         // gather the event data
         const name = headers['x-github-event'];
         const id = headers['x-github-delivery'];
-        const payload = JSON.parse(Buffer.from(body, 'base64').toString('utf8'));
+        const payload = JSON.parse(payloadBody);
 
         logger.info(`Received event ${id} ${name}${payload.action ? (`.${payload.action}`) : ''}`);
 
