@@ -173,10 +173,25 @@ module.exports = class OpenWhiskWrapper {
         this._secret = params.GH_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
       }
 
+      // gather the event data either from params or request
+      let {
+        event, eventId, signature, payload,
+      } = params;
+      if (method === 'post' && headers) {
+        payload = Buffer.from(body, 'base64').toString('utf8');
+        event = headers['x-github-event'];
+        eventId = headers['x-github-delivery'];
+        signature = headers['x-hub-signature'];
+      }
+      if (!payload || !event) {
+        logger.error('no event information.');
+        return ERROR;
+      }
+
       // validate webhook
-      const payloadBody = Buffer.from(body, 'base64').toString('utf8');
       try {
-        validatePayload(this._secret, payloadBody, headers['x-hub-signature']);
+        validatePayload(this._secret, payload, signature);
+        payload = JSON.parse(payload);
       } catch (e) {
         logger.error(`Error validating payload: ${e.message}`);
         return ERROR;
@@ -192,16 +207,11 @@ module.exports = class OpenWhiskWrapper {
       }
 
       try {
-        // gather the event data
-        const name = headers['x-github-event'];
-        const id = headers['x-github-delivery'];
-        const payload = JSON.parse(payloadBody);
-
-        logger.info(`Received event ${id} ${name}${payload.action ? (`.${payload.action}`) : ''}`);
+        logger.info(`Received event ${eventId} ${event}${payload.action ? (`.${payload.action}`) : ''}`);
 
         // let probot handle the event
         await this._probot.receive({
-          name,
+          name: event,
           payload,
         });
         if (this._errors.length > 0) {

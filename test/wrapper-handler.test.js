@@ -53,6 +53,19 @@ async function createTestPayload(testContext) {
   };
 }
 
+async function createRawTestPayload(testContext) {
+  const payload = await fs.readFile(PAYLOAD_ISSUES_OPENED, 'utf-8');
+  const signature = `sha1=${crypto.createHmac('sha1', WEBHOOK_SECRET).update(payload, 'utf-8').digest('hex')}`;
+  return {
+    event: 'issues.opened',
+    eventId: 1234,
+    payload,
+    signature,
+    TEST_PARAM: 'test-param',
+    testContext,
+  };
+}
+
 describe('OpenWhisk Wrapper - Handler', () => {
   let savedEnv;
 
@@ -74,6 +87,25 @@ describe('OpenWhisk Wrapper - Handler', () => {
       .create();
 
     const result = await main(await createTestPayload());
+
+    assert.ok(testHandler.invoked);
+    assert.equal(testHandler.testParam, 'test-param');
+    assert.deepEqual(result, {
+      body: '{"message":"ok"}',
+      statusCode: 200,
+    });
+  });
+
+  it('invokes the handler via params', async () => {
+    const testHandler = new TestHandler();
+
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
+      .withWebhookSecret(WEBHOOK_SECRET)
+      .withHandler(testHandler.invoker())
+      .create();
+
+    const result = await main(await createRawTestPayload());
 
     assert.ok(testHandler.invoked);
     assert.equal(testHandler.testParam, 'test-param');
