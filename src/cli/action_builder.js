@@ -86,7 +86,9 @@ module.exports = class ActionBuilder {
       'js-yaml',
       '@tripod/openpgp',
       'dotenv',
-      'axios',
+      'bunyan',
+      'bunyan-loggly',
+      'bunyan-format',
     ];
     this._docker = 'tripodsan/probot-ow-nodejs8:latest';
     this._deploy = false;

@@ -11,7 +11,7 @@
  */
 
 // ensure that env is loaded as soon as possible. unfortunately, probot doesn't offer a way to
-// set the log_format, once its created the logger. for openwhisk, we can't really use the
+// set the log_format, once it's created the logger. for openwhisk, we can't really use the
 // colored logs, as they don't show nicely in the activation logs.
 //
 // Also, webpack will load the external modules before the bundled ones, so we put this little
