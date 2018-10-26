@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 const OpenWhiskWrapper = require('./src/openwhisk');
+const Logger = require('./src/Logger');
 
 module.exports = {
   OpenWhiskWrapper,
+  Logger,
 };

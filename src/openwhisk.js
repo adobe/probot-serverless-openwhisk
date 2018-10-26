@@ -17,6 +17,7 @@ const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
+const Logger = require('./Logger.js');
 const defaultRoute = require('./views/default');
 
 const ERROR = {
@@ -130,7 +131,7 @@ module.exports = class OpenWhiskWrapper {
   }
 
   create() {
-    return async (params) => {
+    const run = async (params) => {
       const {
         __ow_method: method,
         __ow_headers: headers,
@@ -227,6 +228,21 @@ module.exports = class OpenWhiskWrapper {
         logger.error(err);
         return ERROR;
       }
+    };
+
+    return async (params) => {
+      // setup logger if configured
+      Logger.init(logger, params);
+
+      // run actual action
+      const result = await run(params);
+
+      // if remote loggers are configured, wait a little to ensure logs buffers are flushed
+      if (logger.flush) {
+        await logger.flush();
+      }
+
+      return result;
     };
   }
 };
