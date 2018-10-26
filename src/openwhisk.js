@@ -17,7 +17,7 @@ const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
-const Bunyan2Loggly = require('bunyan-loggly');
+const Logger = require('./Logger.js');
 const defaultRoute = require('./views/default');
 
 const ERROR = {
@@ -231,49 +231,14 @@ module.exports = class OpenWhiskWrapper {
     };
 
     return async (params) => {
-      // setup loggly logger if configured
-      logger.fields.ow = {
-        activationId: process.env.__OW_ACTIVATION_ID,
-        actionName: process.env.__OW_ACTION_NAME,
-      };
-      const hasLoggly = params && params.LOGGLY_SUBDOMAIN && params.LOGGLY_TOKEN;
-
-      if (hasLoggly) {
-        // temporary fix to avoid cumulation of streams in case the nodejs process isn't stopped
-        // in between activations
-        if (logger.streams.find(s => s.name === 'LogglyStream')) {
-          // eslint-disable-next-line no-console
-          console.log('(loggly stream already added)');
-        } else {
-          const logglyConfig = {
-            token: params.LOGGLY_TOKEN,
-            subdomain: params.LOGGLY_SUBDOMAIN,
-          };
-          const bufferLength = 1000;
-          const bufferTimeout = 500;
-          logger.addStream({
-            name: 'LogglyStream',
-            level: 'debug',
-            type: 'raw',
-            stream: new Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout),
-          });
-
-          logger.flush = async function flush() {
-            return new Promise((done) => {
-              setTimeout(() => {
-                done();
-              }, 5000);
-            });
-          };
-        }
-      } else {
-        logger.info('unable to setup loggly logger. credentials missing.');
-      }
+      // setup logger if configured
+      Logger.init(logger, params);
 
       // run actual action
       const result = await run(params);
-      // if loggly is configured, wait a little to ensure logs buffers are flushed
-      if (hasLoggly) {
+
+      // if remote loggers are configured, wait a little to ensure logs buffers are flushed
+      if (logger.flush) {
         await logger.flush();
       }
 

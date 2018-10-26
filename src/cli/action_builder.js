@@ -89,6 +89,7 @@ module.exports = class ActionBuilder {
       'bunyan',
       'bunyan-loggly',
       'bunyan-format',
+      'bunyan-syslog',
     ];
     this._docker = 'tripodsan/probot-ow-nodejs8:latest';
     this._deploy = false;
