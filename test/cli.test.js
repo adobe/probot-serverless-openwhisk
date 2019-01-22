@@ -46,6 +46,12 @@ describe('CLI Test', () => {
     assert.equal(builder._test, true);
   });
 
+  it('sets nameg', () => {
+    const builder = new CLI(true)
+      .run(['--name', 'foo']);
+    assert.equal(builder._name, 'foo');
+  });
+
   it('disables hints flag', () => {
     const builder = new CLI(true)
       .run(['--no-hints']);
