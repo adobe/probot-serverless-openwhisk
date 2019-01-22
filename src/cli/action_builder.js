@@ -22,6 +22,7 @@ const dotenv = require('dotenv');
 const os = require('os');
 const ow = require('openwhisk');
 const request = require('request-promise-native');
+const { version } = require('../../package.json');
 
 require('dotenv').config();
 
@@ -158,6 +159,11 @@ module.exports = class ActionBuilder {
     return this;
   }
 
+  withName(value) {
+    this._name = value;
+    return this;
+  }
+
   validate() {
     if (!this._privateKey) {
       this._privateKey = findPrivateKey();
@@ -176,7 +182,12 @@ module.exports = class ActionBuilder {
       this._distDir = path.resolve(this._cwd, 'dist');
     }
     if (!this._name) {
-      this._name = path.basename(this._cwd);
+      try {
+        const pkgJson = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'package.json')));
+        this._name = pkgJson.actionName || pkgJson.name;
+      } catch (e) {
+        this._name = path.basename(this._cwd);
+      }
     }
     if (!this._zipFile) {
       this._zipFile = path.resolve(this._distDir, `${this._name}.zip`);
@@ -322,7 +333,8 @@ module.exports = class ActionBuilder {
   }
 
   async test() {
-    const url = `${this._wskApiHost}/api/v1/web/${this._wskNamespace}/default/${this._name}`;
+    const action = this._name.indexOf('/') < 0 ? `default/${this._name}` : this._name;
+    const url = `${this._wskApiHost}/api/v1/web/${this._wskNamespace}/${action}`;
     log.info(`--: requesting: ${chalk.blueBright(url)} ...`);
     try {
       const ret = await request(url);
@@ -334,6 +346,7 @@ module.exports = class ActionBuilder {
   }
 
   async run() {
+    log.info(chalk`{grey wskbot v${version}}`);
     this.validate();
     await this.createPackage();
     await this.createArchive();

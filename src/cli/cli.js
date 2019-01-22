@@ -27,6 +27,9 @@ class CLI {
         description: 'Automatically deploy to OpenWhisk',
         default: false,
       })
+      .option('name', {
+        description: 'OpenWhisk action name. Can be prefixed with package.',
+      })
       .option('test', {
         description: 'Invoke action after deployment',
         default: false,
@@ -70,6 +73,7 @@ class CLI {
       .withHints(argv.hints)
       .withStatic(argv.static)
       .withParams(argv.params)
+      .withName(argv.name)
       .withParamsFile(argv.paramsFile)
       .withGithubPrivateKey(argv.githubKey);
 
