@@ -17,56 +17,17 @@ const assert = require('assert');
 
 const CLI = require('../src/cli/cli.js');
 
+// we only thest own own params. the rest is tested in openwhisk-action-builder
 describe('CLI Test', () => {
   it('has correct defaults with no arguments', () => {
-    const builder = new CLI(true).run();
-    assert.equal(builder._verbose, false);
-    assert.equal(builder._deploy, false);
-    assert.equal(builder._test, false);
-    assert.equal(builder._showHints, true);
-    assert.equal(JSON.stringify([...builder._statics]).toString(), '[]');
-    assert.deepEqual(builder._params, {});
+    const builder = new CLI(true).prepare();
+    assert.equal(builder._privateKey, null);
+    assert.equal(builder._docker, 'tripodsan/probot-ow-nodejs8:latest');
   });
 
-  it('sets verbose flag', () => {
+  it('sets github key', () => {
     const builder = new CLI(true)
-      .run(['-v']);
-    assert.equal(builder._verbose, true);
-  });
-
-  it('sets deploy flag', () => {
-    const builder = new CLI(true)
-      .run(['--deploy']);
-    assert.equal(builder._deploy, true);
-  });
-
-  it('sets test flag', () => {
-    const builder = new CLI(true)
-      .run(['--test']);
-    assert.equal(builder._test, true);
-  });
-
-  it('sets nameg', () => {
-    const builder = new CLI(true)
-      .run(['--name', 'foo']);
-    assert.equal(builder._name, 'foo');
-  });
-
-  it('disables hints flag', () => {
-    const builder = new CLI(true)
-      .run(['--no-hints']);
-    assert.equal(builder._showHints, false);
-  });
-
-  it('can add statics', () => {
-    const builder = new CLI(true)
-      .run(['-s', 'foo', '-s', 'bar']);
-    assert.equal(JSON.stringify([...builder._statics]).toString(), '[["foo","foo"],["bar","bar"]]');
-  });
-
-  it('can add params', () => {
-    const builder = new CLI(true)
-      .run(['-p', 'foo=bar']);
-    assert.deepEqual(builder._params, { foo: 'bar' });
+      .prepare(['--github-key', 'foo']);
+    assert.equal(builder._privateKey, 'foo');
   });
 });
