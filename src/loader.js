@@ -21,4 +21,4 @@ process.env.LOG_FORMAT = 'simple';
 require('dotenv').config();
 
 // eslint-disable-next-line import/no-unresolved
-module.exports.main = require('./app.js').main;
+module.exports.main = require('./main.js').main;

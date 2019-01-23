@@ -12,77 +12,37 @@
 
 /* eslint-disable no-console */
 
-const yargs = require('yargs');
-const ActionBuilder = require('./action_builder.js');
+const OWCLI = require('openwhisk-action-builder').CLI;
 
-class CLI {
-  constructor(noRun) {
-    this._noRun = noRun; // this is for testing only.
-    this._yargs = yargs
-      .option('verbose', {
-        alias: 'v',
-        default: false,
-      })
-      .option('deploy', {
-        description: 'Automatically deploy to OpenWhisk',
-        default: false,
-      })
-      .option('name', {
-        description: 'OpenWhisk action name. Can be prefixed with package.',
-      })
-      .option('test', {
-        description: 'Invoke action after deployment',
-        default: false,
-      })
-      .option('hints', {
-        alias: 'no-hints',
-        description: 'Show action and github app settings',
-        default: true,
-      })
-      .option('static', {
-        alias: 's',
-        description: 'Includes a static file into the archive',
-        type: 'array',
-        default: [],
-      })
-      .option('params', {
-        alias: 'p',
-        description: 'Include the given action param. can be json or env.',
-        type: 'array',
-        default: [],
-      })
-      .option('params-file', {
-        alias: 'f',
-        description: 'Include the given action param from a file; can be json or env.',
-        type: 'array',
-        default: [],
-      })
+class CLI extends OWCLI {
+  constructor() {
+    super();
+    this._yargs
+      .default('kind', '')
+      .default('docker', 'tripodsan/probot-ow-nodejs8:latest')
       .option('github-key', {
         description: 'Specify the GitHub private key file',
       })
-      .epilogue('for more information, find our manual at https://github.com/tripodsan/probot-serverless-openwhisk')
-      .help();
+      .group(['github-key'], 'GitHub Options');
   }
 
-  run(args) {
-    const argv = this._yargs.parse(args);
-    const builder = new ActionBuilder()
-      .verbose(argv.verbose)
-      .withDeploy(argv.deploy)
-      .withTest(argv.test)
-      .withHints(argv.hints)
-      .withStatic(argv.static)
-      .withParams(argv.params)
-      .withName(argv.name)
-      .withParamsFile(argv.paramsFile)
-      .withGithubPrivateKey(argv.githubKey);
+  // eslint-disable-next-line class-methods-use-this
+  _epiloge() {
+    return 'for more information, find our manual at https://github.com/tripodsan/probot-serverless-openwhisk';
+  }
 
-    if (!this._noRun) {
-      builder
-        .run()
-        .catch(console.error);
-    }
-    return builder;
+  // eslint-disable-next-line class-methods-use-this
+  createBuilder() {
+    // eslint-disable-next-line global-require
+    const ActionBuilder = require('./action_builder.js');
+    return new ActionBuilder();
+  }
+
+  prepare(args) {
+    const builder = super.prepare(args);
+    const argv = this._yargs.parse(args);
+    return builder
+      .withGithubPrivateKey(argv.githubKey);
   }
 }
 
