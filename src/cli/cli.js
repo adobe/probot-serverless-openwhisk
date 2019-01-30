@@ -12,14 +12,14 @@
 
 /* eslint-disable no-console */
 
-const OWCLI = require('openwhisk-action-builder').CLI;
+const OWCLI = require('@adobe/openwhisk-action-builder').CLI;
 
 class CLI extends OWCLI {
   constructor() {
     super();
     this._yargs
       .default('kind', '')
-      .default('docker', 'tripodsan/probot-ow-nodejs8:latest')
+      .default('docker', 'tripodsan/probot-ow-nodejs10:latest')
       .option('github-key', {
         description: 'Specify the GitHub private key file',
       })

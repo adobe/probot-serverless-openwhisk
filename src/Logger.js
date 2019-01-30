@@ -16,7 +16,7 @@ const fs = require('fs');
 const { Writable } = require('stream');
 const bunyan = require('bunyan');
 const Bunyan2Loggly = require('bunyan-loggly');
-const BunyanSyslog = require('bunyan-syslog');
+const BunyanSyslog = require('@tripod/bunyan-syslog');
 
 const LEVELS = {
   10: 'TRACE',

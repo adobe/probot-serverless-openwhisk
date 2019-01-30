@@ -12,7 +12,7 @@
 
 const fse = require('fs-extra');
 const path = require('path');
-const OWActionBuilder = require('openwhisk-action-builder').ActionBuilder;
+const OWActionBuilder = require('@adobe/openwhisk-action-builder').ActionBuilder;
 const chalk = require('chalk');
 const { findPrivateKey } = require('probot/lib/private-key');
 const dotenv = require('dotenv');
@@ -24,19 +24,6 @@ const GITHUB_PRIVATE_KEY_FILE = 'github-private-key.pem';
 module.exports = class ActionBuilder extends OWActionBuilder {
   constructor() {
     super();
-    this._externals = [
-      /^probot(\/.*)?$/,
-      'probot-commands',
-      'fs-extra',
-      'js-yaml',
-      '@tripod/openpgp',
-      'dotenv',
-      'bunyan',
-      'bunyan-loggly',
-      'bunyan-format',
-      'bunyan-syslog',
-    ];
-    this._docker = 'tripodsan/probot-ow-nodejs8:latest';
     this._privateKey = null;
   }
 
@@ -53,6 +40,20 @@ module.exports = class ActionBuilder extends OWActionBuilder {
     if (!this._privateKey) {
       throw new Error('No Probot-App private key set nor cannot be found in your directory.');
     }
+
+    this._externals = [
+      /^probot(\/.*)?$/,
+      'probot-commands',
+      'fs-extra',
+      'js-yaml',
+      '@tripod/openpgp',
+      'dotenv',
+      'bunyan',
+      'bunyan-loggly',
+      'bunyan-format',
+      '@tripod/bunyan-syslog',
+    ];
+    this._docker = 'tripodsan/probot-ow-nodejs10:latest';
   }
 
   async updateArchive(archive, packageJson) {

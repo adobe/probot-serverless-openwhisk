@@ -22,7 +22,7 @@ describe('CLI Test', () => {
   it('has correct defaults with no arguments', () => {
     const builder = new CLI(true).prepare();
     assert.equal(builder._privateKey, null);
-    assert.equal(builder._docker, 'tripodsan/probot-ow-nodejs8:latest');
+    assert.equal(builder._docker, 'tripodsan/probot-ow-nodejs10:latest');
   });
 
   it('sets github key', () => {
