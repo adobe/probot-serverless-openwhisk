@@ -20,13 +20,16 @@ const CLI = require('../src/cli/cli.js');
 // we only thest own own params. the rest is tested in openwhisk-action-builder
 describe('CLI Test', () => {
   it('has correct defaults with no arguments', () => {
-    const builder = new CLI(true).prepare();
+    const builder = new CLI().prepare();
     assert.equal(builder._privateKey, null);
     assert.equal(builder._docker, 'tripodsan/probot-ow-nodejs10:latest');
+    assert.equal(builder._kind, '');
+    assert.equal(builder._webAction, true);
+    assert.equal(builder._rawHttp, true);
   });
 
   it('sets github key', () => {
-    const builder = new CLI(true)
+    const builder = new CLI()
       .prepare(['--github-key', 'foo']);
     assert.equal(builder._privateKey, 'foo');
   });
