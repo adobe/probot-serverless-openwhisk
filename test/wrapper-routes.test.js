@@ -34,6 +34,7 @@ describe('OpenWhisk Wrapper - Routes', () => {
       body: 'Hello, world.',
       headers: {
         'Content-Type': 'text/html',
+        'Cache-Control': 'max-age=86400',
       },
       statusCode: 200,
     });
@@ -56,6 +57,7 @@ describe('OpenWhisk Wrapper - Routes', () => {
       body: 'Hello, world.',
       headers: {
         'Content-Type': 'text/plain',
+        'Cache-Control': 'max-age=86400',
       },
       statusCode: 200,
     });
@@ -78,6 +80,7 @@ describe('OpenWhisk Wrapper - Routes', () => {
       body: 'Hello, world.',
       headers: {
         'Content-Type': 'text/plain',
+        'Cache-Control': 'max-age=86400',
       },
       statusCode: 200,
     });
@@ -115,6 +118,7 @@ describe('OpenWhisk Wrapper - Routes', () => {
       body: 'Hello, world.',
       headers: {
         'Content-Type': 'text/html',
+        'Cache-Control': 'max-age=86400',
       },
       statusCode: 200,
     });

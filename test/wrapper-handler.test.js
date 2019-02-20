@@ -93,6 +93,9 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.deepEqual(result, {
       body: '{"message":"ok"}',
       statusCode: 200,
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+      },
     });
   });
 
@@ -112,6 +115,9 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.deepEqual(result, {
       body: '{"message":"ok"}',
       statusCode: 200,
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+      },
     });
   });
 
@@ -130,6 +136,9 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.deepEqual(result, {
       body: 'Internal Server Error.',
       statusCode: 500,
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+      },
     });
   });
 
@@ -153,6 +162,9 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.deepEqual(result, {
       body: '{"message":"ok"}',
       statusCode: 200,
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+      },
     });
   });
 
@@ -170,6 +182,9 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.deepEqual(result, {
       body: '{"message":"ok"}',
       statusCode: 200,
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+      },
     });
   });
 

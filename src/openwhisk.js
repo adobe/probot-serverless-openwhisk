@@ -22,6 +22,9 @@ const defaultRoute = require('./views/default');
 
 const ERROR = {
   statusCode: 500,
+  headers: {
+    'Cache-Control': 'no-store, must-revalidate',
+  },
   body: 'Internal Server Error.',
 };
 
@@ -159,6 +162,7 @@ module.exports = class OpenWhiskWrapper {
             statusCode: 200,
             headers: {
               'Content-Type': 'text/html',
+              'Cache-Control': 'max-age=86400',
             },
             body: view,
           };
@@ -220,6 +224,9 @@ module.exports = class OpenWhiskWrapper {
         }
         return {
           statusCode: 200,
+          headers: {
+            'Cache-Control': 'no-store, must-revalidate',
+          },
           body: JSON.stringify({
             message: 'ok',
           }),
@@ -239,7 +246,7 @@ module.exports = class OpenWhiskWrapper {
 
       // if remote loggers are configured, wait a little to ensure logs buffers are flushed
       if (logger.flush) {
-        await logger.flush();
+        logger.flush(); // don't wait for flush.
       }
 
       return result;

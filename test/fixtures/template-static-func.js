@@ -15,6 +15,7 @@ module.exports = function main() {
     statusCode: 200,
     headers: {
       'Content-Type': 'text/plain',
+      'Cache-Control': 'max-age=86400',
     },
     body: 'Hello, world.',
   };
