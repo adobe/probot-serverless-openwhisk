@@ -31,7 +31,7 @@
     "dotenv": "^6.0.0",
     "fs-extra": "^7.0.0",
     "openwhisk": "^3.17.0",
-    "probot": "7.5.0"
+    "probot": "7.5.1"
   },
   "devDependencies": {
     "ajv": "^6.9.1",
