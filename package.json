@@ -1,6 +1,6 @@
 {
   "name": "probot-serverless-openwhisk",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "description": "Probot Serverless OpenWisk",
   "license": "Apache-2.0",
   "repository": "https://github.com/tripodsan/probot-serverless-openwhisk",
@@ -31,14 +31,14 @@
     "dotenv": "^6.0.0",
     "fs-extra": "^7.0.0",
     "openwhisk": "^3.17.0",
-    "probot": "7.5.0"
+    "probot": "9.0.1"
   },
   "devDependencies": {
     "ajv": "^6.9.1",
     "codecov": "^3.2.0",
     "eslint": "^5.14.1",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-header": "^2.0.0",
+    "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.11.0",

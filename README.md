@@ -43,7 +43,7 @@ probot app into an OpenWhisk action.
     ```
 5. Deploy the OpenWhisk action
     ```sh
-    $ wsk action update probot-openwhisk-example --docker tripodsan/probot-ow-nodejs8:latest --web raw dist/probot-openwhisk-example.zip
+    $ wsk action update probot-openwhisk-example --kind nodejs:10-fat --web raw dist/probot-openwhisk-example.zip
     ```
 
 6. Set the correct [github app settings](https://github.com/settings/apps):    
@@ -99,7 +99,7 @@ With no arguments,the `wskbot` just bundles your code into the respective `actio
 $ wskbot
 ok: created action: dist/probot-openwhisk-example.zip.
 Deploy to openwhisk the following command or specify --deploy on the commandline:
-$ wsk action update probot-openwhisk-example --docker tripodsan/probot-ow-nodejs8:latest --web raw dist/probot-openwhisk-example.zip
+$ wsk action update probot-openwhisk-example --kind nodejs:10-fat --web raw dist/probot-openwhisk-example.zip
 
 Githup App Settings:
 Homepage URL: https://adobeioruntime.net/api/v1/web/tripod/default/probot-openwhisk-example/probot
@@ -181,11 +181,6 @@ wskbot -s logo.png
 
 The action is created using webpack to create bundle for the sources and then creates a zip archive
 with the bundle, a `package.json`, the private key files and the `.env`.
-
-### Docker Image
-
-The action needs a special docker image [tripodsan/probot-ow-nodejs8:latest](https://github.com/tripodsan/probot-openwhisk-docker)
-that already contains `probot` and its dependencies. This helps to keep the size of the action small. 
 
 ## Contributing
 
