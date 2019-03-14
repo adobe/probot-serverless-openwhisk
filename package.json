@@ -1,10 +1,10 @@
 {
-  "name": "probot-serverless-openwhisk",
-  "version": "0.13.5",
+  "name": "@adobe/probot-serverless-openwhisk",
+  "version": "0.14.0",
   "description": "Probot Serverless OpenWisk",
   "license": "Apache-2.0",
-  "repository": "https://github.com/tripodsan/probot-serverless-openwhisk",
-  "bugs": "https://github.com/tripodsan/probot-serverless-openwhisk/issues",
+  "repository": "https://github.com/adobe/probot-serverless-openwhisk",
+  "bugs": "https://github.com/adobe/probot-serverless-openwhisk/issues",
   "keywords": [
     "probot",
     "github",

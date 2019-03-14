@@ -25,7 +25,7 @@ probot app into an OpenWhisk action.
 
 3. Add an `index.js`:
     ```js
-    const { OpenWhiskWrapper } = require('probot-servleless-openwhisk');
+    const { OpenWhiskWrapper } = require('@adobe/probot-serveless-openwhisk');
     const app = require('./src/probot_app.js');
     const view = require('./src/views/probot.js');
     
