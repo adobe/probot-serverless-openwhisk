@@ -22,7 +22,7 @@ describe('CLI Test', () => {
   it('has correct defaults with no arguments', () => {
     const builder = new CLI().prepare();
     assert.equal(builder._privateKey, null);
-    assert.equal(builder._docker, 'tripodsan/probot-ow-nodejs10:latest');
+    assert.equal(builder._docker, undefined);
     assert.equal(builder._kind, '');
     assert.equal(builder._webAction, true);
     assert.equal(builder._rawHttp, true);

@@ -65,6 +65,7 @@ module.exports = class OpenWhiskWrapper {
     this._appId = null;
     this._secret = null;
     this._privateKey = null;
+    this._githubToken = null;
     this._errors = [];
   }
 
@@ -100,6 +101,11 @@ module.exports = class OpenWhiskWrapper {
     return this;
   }
 
+  withGithubToken(token) {
+    this._githubToken = token;
+    return this;
+  }
+
   initProbot(params) {
     if (!this._privateKey) {
       this._privateKey = findPrivateKey();
@@ -109,6 +115,7 @@ module.exports = class OpenWhiskWrapper {
       secret: this._secret,
       cert: this._privateKey,
       catchErrors: false,
+      githubToken: this._githubToken,
     };
     this._probot = createProbot(options);
     this._probot.load((app) => {
