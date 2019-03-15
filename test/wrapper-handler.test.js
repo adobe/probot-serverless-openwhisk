@@ -36,12 +36,13 @@ class TestHandler {
   }
 }
 
-async function createTestPayload(testContext) {
-  const payload = await fs.readFile(PAYLOAD_ISSUES_OPENED, 'utf-8');
+async function createTestPayload(testContext, rootPath = '/') {
+  let payload = await fs.readFile(PAYLOAD_ISSUES_OPENED, 'utf-8');
+  payload = JSON.stringify(JSON.parse(payload));
   const signature = crypto.createHmac('sha1', WEBHOOK_SECRET).update(payload, 'utf-8').digest('hex');
   return {
     __ow_method: 'post',
-    __ow_path: '/static.txt',
+    __ow_path: rootPath,
     __ow_body: Buffer.from(payload).toString('base64'),
     __ow_headers: {
       'x-github-event': 'issues.opened',
@@ -91,12 +92,78 @@ describe('OpenWhisk Wrapper - Handler', () => {
 
     assert.ok(testHandler.invoked);
     assert.equal(testHandler.testParam, 'test-param');
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
+    });
+  });
+
+  it('invokes the handler on different webhook root', async () => {
+    const testHandler = new TestHandler();
+
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
+      .withWebhookSecret(WEBHOOK_SECRET)
+      .withHandler(testHandler.invoker())
+      .withGithubToken('dummy')
+      .withWebHookPath('/somepath')
+      .create();
+
+    const result = await main(await createTestPayload({}, '/somepath'));
+
+    assert.ok(testHandler.invoked);
+    assert.equal(testHandler.testParam, 'test-param');
+    delete result.headers.date;
+    assert.deepEqual(result, {
+      body: 'ok\n',
+      statusCode: 200,
+      headers: {
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
+      },
+    });
+  });
+
+  it('does not invoke the handler on different webhook root', async () => {
+    const testHandler = new TestHandler();
+
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
+      .withWebhookSecret(WEBHOOK_SECRET)
+      .withHandler(testHandler.invoker())
+      .withGithubToken('dummy')
+      .withWebHookPath('/wrong')
+      .create();
+
+    const result = await main(await createTestPayload({}, '/somepath'));
+
+    assert.ok(!testHandler.invoked);
+    assert.equal(testHandler.testParam, 'test-param');
+    delete result.headers.date;
+    assert.deepEqual(result, {
+      body: '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /somepath</pre>\n</body>\n</html>\n',
+      headers: {
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '148',
+        'content-security-policy': "default-src 'self'",
+        'content-type': 'text/html; charset=utf-8',
+        'x-content-type-options': 'nosniff',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
+      },
+      statusCode: 404,
     });
   });
 
@@ -114,11 +181,13 @@ describe('OpenWhisk Wrapper - Handler', () => {
 
     assert.ok(testHandler.invoked);
     assert.equal(testHandler.testParam, 'test-param');
+
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
       },
     });
   });
@@ -136,12 +205,17 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const result = await main(await createTestPayload());
 
     assert.ok(!testHandler.invoked);
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: 'Internal Server Error.',
-      statusCode: 500,
+      body: 'Error: signature does not match event payload and secret',
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '56',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
+      statusCode: 400,
     });
   });
 
@@ -163,11 +237,16 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.equal(testHandler1.testParam, 'test-param');
     assert.ok(testHandler2.invoked);
     assert.equal(testHandler2.testParam, 'test-param');
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
     });
   });
@@ -184,11 +263,16 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const result = await main(await createTestPayload(testContext));
 
     assert.ok(testContext.invoked);
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
     });
   });
@@ -250,6 +334,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
       .withHandler('./test/fixtures/issues-opened-handler.js')
+      .withGithubToken('dummy')
       .create();
 
     const testContext = {

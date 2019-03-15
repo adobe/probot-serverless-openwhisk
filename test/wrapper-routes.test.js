@@ -17,12 +17,37 @@ const assert = require('assert');
 const { OpenWhiskWrapper } = require('../index.js');
 
 describe('OpenWhisk Wrapper - Routes', () => {
+  it('Delivers PING', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey('dummy')
+      // .withHandler({})
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/ping',
+    });
+
+    delete result.headers.date;
+    delete result.headers['x-request-id'];
+    assert.deepEqual(result, {
+      body: 'PONG',
+      headers: {
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '4',
+        'x-powered-by': 'Express',
+      },
+      statusCode: 200,
+    });
+  });
+
   it('Can deliver static template', async () => {
     // eslint-disable-next-line no-new
     const main = new OpenWhiskWrapper()
       .withRoute('/static.txt', require('./fixtures/template-string.js'))
       .withGithubPrivateKey('dummy')
-      .withHandler({})
       .create();
 
     const result = await main({
@@ -30,11 +55,18 @@ describe('OpenWhisk Wrapper - Routes', () => {
       __ow_path: '/static.txt',
     });
 
+    delete result.headers.date;
+    delete result.headers['x-request-id'];
+
     assert.deepEqual(result, {
       body: 'Hello, world.',
       headers: {
-        'Content-Type': 'text/html',
-        'Cache-Control': 'max-age=86400',
+        'cache-control': 'max-age=86400',
+        connection: 'close',
+        'content-length': '13',
+        'content-type': 'text/html; charset=utf-8',
+        etag: 'W/"d-KuAUcjF9GTWoR5fsGYOuJD/Gqig"',
+        'x-powered-by': 'Express',
       },
       statusCode: 200,
     });
