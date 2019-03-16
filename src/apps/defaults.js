@@ -10,19 +10,22 @@
  * governing permissions and limitations under the License.
  */
 const path = require('path');
+const fse = require('fs-extra');
+
+let pkgJson;
 
 module.exports = (app) => {
   const route = app.route();
 
-  route.get('/wskbot', (req, res) => {
-    let pkg = {};
-    try {
-      // eslint-disable-next-line import/no-dynamic-require,global-require
-      pkg = require(path.join(process.cwd(), 'package.json'));
-    } catch (e) {
-      // ignore
-    }
-    res.render('wskbot.hbs', pkg);
-  });
   route.get('/', (req, res) => res.redirect('/wskbot'));
+  route.get('/wskbot', async (req, res) => {
+    if (!pkgJson) {
+      try {
+        pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
+      } catch (e) {
+        pkgJson = {};
+      }
+    }
+    res.render('wskbot.hbs', pkgJson);
+  });
 };

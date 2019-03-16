@@ -21,7 +21,6 @@ class CLI extends OWCLI {
       .default('kind', '')
       .default('web-export', true)
       .default('raw-http', true)
-      // .default('docker', 'tripodsan/probot-ow-nodejs10:latest')
       .option('github-key', {
         description: 'Specify the GitHub private key file',
       })
@@ -30,7 +29,7 @@ class CLI extends OWCLI {
 
   // eslint-disable-next-line class-methods-use-this
   _epiloge() {
-    return 'for more information, find our manual at https://github.com/tripodsan/probot-serverless-openwhisk';
+    return 'for more information, find our manual at https://github.com/adobe/probot-serverless-openwhisk';
   }
 
   // eslint-disable-next-line class-methods-use-this

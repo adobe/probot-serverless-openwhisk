@@ -19,6 +19,7 @@ const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
 const delegator = require('expressjs-openwhisk');
+const hbs = require('hbs');
 const Logger = require('./Logger.js');
 
 const ERROR = {
@@ -55,7 +56,7 @@ function validatePayload(secret, payload = '', signature) {
 
 module.exports = class OpenWhiskWrapper {
   constructor() {
-    this._viewsDirectory = path.resolve(__dirname, 'views');
+    this._viewsDirectory = [];
     this._apps = [];
     this._appId = null;
     this._secret = null;
@@ -75,7 +76,7 @@ module.exports = class OpenWhiskWrapper {
   }
 
   withViewsDirectory(value) {
-    this._viewsDirectory = value;
+    this._viewsDirectory.push(path.resolve(process.cwd(), value));
     return this;
   }
 
@@ -117,8 +118,13 @@ module.exports = class OpenWhiskWrapper {
       webhookPath: this._webhookPath,
     };
     this._probot = createProbot(options);
-    this._probot.server.set('views', path.resolve(process.cwd(), this._viewsDirectory));
+    if (this._viewsDirectory.length === 0) {
+      this.withViewsDirectory('./views');
+    }
+    this._probot.server.set('views', this._viewsDirectory);
     this._probot.logger.debug('Set view directory to %s', this._probot.server.get('views'));
+    this._probot.server.engine('hbs', hbs.__express);
+
     this._probot.load((app) => {
       const appOn = app.on;
       // the eventemmitter does not properly propagate errors thrown in the listeners

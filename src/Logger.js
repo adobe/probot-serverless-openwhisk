@@ -18,6 +18,11 @@ const bunyan = require('bunyan');
 const Bunyan2Loggly = require('bunyan-loggly');
 const BunyanSyslog = require('@tripod/bunyan-syslog');
 
+require('dotenv').config();
+
+// default to simple log format
+process.env.LOG_FORMAT = process.env.LOG_FORMAT || 'simple';
+
 const LEVELS = {
   10: 'TRACE',
   20: 'DEBUG',
