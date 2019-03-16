@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Adobe. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,5 +9,20 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+const path = require('path');
 
-module.exports = 'Hello, world.';
+module.exports = (app) => {
+  const route = app.route();
+
+  route.get('/wskbot', (req, res) => {
+    let pkg = {};
+    try {
+      // eslint-disable-next-line import/no-dynamic-require,global-require
+      pkg = require(path.join(process.cwd(), 'package.json'));
+    } catch (e) {
+      // ignore
+    }
+    res.render('wskbot.hbs', pkg);
+  });
+  route.get('/', (req, res) => res.redirect('/wskbot'));
+};

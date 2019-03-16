@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+process.env.LOG_LEVEL = 'debug';
 
 /* eslint-env mocha */
 /* eslint-disable global-require,no-underscore-dangle */
@@ -84,7 +85,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
       .withGithubToken('dummy')
       .create();
 
@@ -112,7 +113,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
       .withGithubToken('dummy')
       .withWebHookPath('/somepath')
       .create();
@@ -141,7 +142,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
       .withGithubToken('dummy')
       .withWebHookPath('/wrong')
       .create();
@@ -173,7 +174,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
       .withGithubToken('dummy')
       .create();
 
@@ -198,7 +199,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret('notmysecret')
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
       .withGithubToken('dummy')
       .create();
 
@@ -226,8 +227,8 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler1.invoker())
-      .withHandler(testHandler2.invoker())
+      .withApp(testHandler1.invoker())
+      .withApp(testHandler2.invoker())
       .withGithubToken('dummy')
       .create();
 
@@ -255,7 +256,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js')
+      .withApp('./test/fixtures/issues-opened-handler.js')
       .withGithubToken('dummy')
       .create();
 
@@ -281,7 +282,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const wrapper = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js');
+      .withApp('./test/fixtures/issues-opened-handler.js');
 
     const payload = await createTestPayload({});
     payload.GH_APP_ID = '1234';
@@ -296,7 +297,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const wrapper = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js');
+      .withApp('./test/fixtures/issues-opened-handler.js');
 
     const payload = await createTestPayload({});
     process.env.APP_ID = '1234';
@@ -311,7 +312,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const wrapper = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js')
+      .withApp('./test/fixtures/issues-opened-handler.js')
       .withAppId(1234);
 
     const payload = await createTestPayload({});
@@ -324,6 +325,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
   it('error during init probot sends 500', async () => {
     const wrapper = new OpenWhiskWrapper()
       .withWebhookSecret(WEBHOOK_SECRET);
+    wrapper._apps = null;
     const payload = await createTestPayload({});
     const result = await wrapper.create()(payload);
     assert.equal(result.statusCode, 500);
@@ -333,7 +335,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js')
+      .withApp('./test/fixtures/issues-opened-handler.js')
       .withGithubToken('dummy')
       .create();
 

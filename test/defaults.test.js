@@ -12,16 +12,17 @@
 
 /* eslint-env mocha */
 /* eslint-disable global-require */
+process.env.LOG_LEVEL = 'debug';
 
 const assert = require('assert');
-const { OpenWhiskWrapper } = require('../index.js');
+const { OpenWhiskWrapper, defaultsApp } = require('../index.js');
+const pkgJson = require('../package.json');
 
-describe('OpenWhisk Wrapper - Routes', () => {
+describe('OpenWhisk Wrapper - Defaults', () => {
   it('Delivers PING', async () => {
     // eslint-disable-next-line no-new
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey('dummy')
-      // .withHandler({})
       .create();
 
     const result = await main({
@@ -43,78 +44,31 @@ describe('OpenWhisk Wrapper - Routes', () => {
     });
   });
 
-  it('Can deliver static template', async () => {
+  it('Redirects to default view', async () => {
     // eslint-disable-next-line no-new
     const main = new OpenWhiskWrapper()
-      .withRoute('/static.txt', require('./fixtures/template-string.js'))
       .withGithubPrivateKey('dummy')
+      .withApp(defaultsApp)
       .create();
 
     const result = await main({
       __ow_method: 'get',
-      __ow_path: '/static.txt',
+      __ow_path: '/',
     });
-
     delete result.headers.date;
     delete result.headers['x-request-id'];
-
     assert.deepEqual(result, {
-      body: 'Hello, world.',
+      body: 'Found. Redirecting to /wskbot',
       headers: {
-        'cache-control': 'max-age=86400',
+        'cache-control': 'no-store, must-revalidate',
         connection: 'close',
-        'content-length': '13',
-        'content-type': 'text/html; charset=utf-8',
-        etag: 'W/"d-KuAUcjF9GTWoR5fsGYOuJD/Gqig"',
+        'content-length': '29',
+        'content-type': 'text/plain; charset=utf-8',
+        location: '/wskbot',
+        vary: 'Accept',
         'x-powered-by': 'Express',
       },
-      statusCode: 200,
-    });
-  });
-
-  it('Can deliver async function template', async () => {
-    // eslint-disable-next-line no-new
-    const main = new OpenWhiskWrapper()
-      .withRoute('/static.txt', require('./fixtures/template-async-func.js'))
-      .withGithubPrivateKey('dummy')
-      .withHandler({})
-      .create();
-
-    const result = await main({
-      __ow_method: 'get',
-      __ow_path: '/static.txt',
-    });
-
-    assert.deepEqual(result, {
-      body: 'Hello, world.',
-      headers: {
-        'Content-Type': 'text/plain',
-        'Cache-Control': 'max-age=86400',
-      },
-      statusCode: 200,
-    });
-  });
-
-  it('Can deliver static function template', async () => {
-    // eslint-disable-next-line no-new
-    const main = new OpenWhiskWrapper()
-      .withRoute('/static.txt', require('./fixtures/template-static-func.js'))
-      .withGithubPrivateKey('dummy')
-      .withHandler({})
-      .create();
-
-    const result = await main({
-      __ow_method: 'get',
-      __ow_path: '/static.txt',
-    });
-
-    assert.deepEqual(result, {
-      body: 'Hello, world.',
-      headers: {
-        'Content-Type': 'text/plain',
-        'Cache-Control': 'max-age=86400',
-      },
-      statusCode: 200,
+      statusCode: 302,
     });
   });
 
@@ -122,37 +76,29 @@ describe('OpenWhisk Wrapper - Routes', () => {
     // eslint-disable-next-line no-new
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey('dummy')
-      .withHandler({})
+      .withApp(defaultsApp)
       .create();
 
     const result = await main({
       __ow_method: 'get',
-      __ow_path: '/whatever',
+      __ow_path: '/wskbot',
     });
-
-    assert.ok(/.*probot-serverless-openwhisk.*/.test(result.body));
+    const match = `<h1>${pkgJson.name} v${pkgJson.version}</h1>`;
+    assert.ok(result.body.indexOf(match) > 0);
   });
 
-  it('Can overwrite default view', async () => {
+  it('Can use default view', async () => {
     // eslint-disable-next-line no-new
     const main = new OpenWhiskWrapper()
-      .withRoute('default', require('./fixtures/template-string.js'))
       .withGithubPrivateKey('dummy')
-      .withHandler({})
+      .withApp(defaultsApp)
       .create();
 
     const result = await main({
       __ow_method: 'get',
-      __ow_path: '/',
+      __ow_path: '/wskbot',
     });
-
-    assert.deepEqual(result, {
-      body: 'Hello, world.',
-      headers: {
-        'Content-Type': 'text/html',
-        'Cache-Control': 'max-age=86400',
-      },
-      statusCode: 200,
-    });
+    const match = `<h1>${pkgJson.name} v${pkgJson.version}</h1>`;
+    assert.ok(result.body.indexOf(match) > 0);
   });
 });

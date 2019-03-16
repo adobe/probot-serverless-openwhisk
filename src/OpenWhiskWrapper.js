@@ -13,14 +13,13 @@
 /* eslint-disable no-underscore-dangle */
 
 const crypto = require('crypto');
+const path = require('path');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
-const delegator = require('openwhisk-expressjs');
+const delegator = require('expressjs-openwhisk');
 const Logger = require('./Logger.js');
-const ViewHandler = require('./ViewHandler.js');
-const defaultRoute = require('./views/default');
 
 const ERROR = {
   statusCode: 500,
@@ -29,10 +28,6 @@ const ERROR = {
   },
   body: 'Internal Server Error.',
 };
-
-function isFunction(obj) {
-  return !!(obj && obj.constructor && obj.call && obj.apply);
-}
 
 /**
  * Validate if the payload is valid.
@@ -60,13 +55,8 @@ function validatePayload(secret, payload = '', signature) {
 
 module.exports = class OpenWhiskWrapper {
   constructor() {
-    this._viewHandler = new ViewHandler();
-    this._handlers = [
-      this._viewHandler.init.bind(this._viewHandler),
-    ];
-    // this._routes = {
-    //   default: defaultRoute,
-    // };
+    this._viewsDirectory = path.resolve(__dirname, 'views');
+    this._apps = [];
     this._appId = null;
     this._secret = null;
     this._privateKey = null;
@@ -75,17 +65,17 @@ module.exports = class OpenWhiskWrapper {
     this._webhookPath = '/';
   }
 
-  withHandler(handler) {
-    if (typeof handler === 'string') {
-      this._handlers.push(resolve(handler));
+  withApp(app) {
+    if (typeof app === 'string') {
+      this._apps.push(resolve(app));
     } else {
-      this._handlers.push(handler);
+      this._apps.push(app);
     }
     return this;
   }
 
-  withRoute(name, template) {
-    this._viewHandler.withRoute(name, template);
+  withViewsDirectory(value) {
+    this._viewsDirectory = value;
     return this;
   }
 
@@ -109,8 +99,8 @@ module.exports = class OpenWhiskWrapper {
     return this;
   }
 
-  withWebHookPath(path) {
-    this._webhookPath = path;
+  withWebHookPath(value) {
+    this._webhookPath = value;
     return this;
   }
 
@@ -127,7 +117,8 @@ module.exports = class OpenWhiskWrapper {
       webhookPath: this._webhookPath,
     };
     this._probot = createProbot(options);
-
+    this._probot.server.set('views', path.resolve(process.cwd(), this._viewsDirectory));
+    this._probot.logger.debug('Set view directory to %s', this._probot.server.get('views'));
     this._probot.load((app) => {
       const appOn = app.on;
       // the eventemmitter does not properly propagate errors thrown in the listeners
@@ -144,7 +135,7 @@ module.exports = class OpenWhiskWrapper {
         };
         return appOn.call(app, eventName, wrapper);
       };
-      this._handlers.forEach((handler) => {
+      this._apps.forEach((handler) => {
         handler(app, params);
       });
     });
@@ -155,37 +146,8 @@ module.exports = class OpenWhiskWrapper {
       const {
         __ow_method: method,
         __ow_headers: headers,
-        __ow_path: path,
         __ow_body: body,
       } = params;
-
-      // check for the routes
-      // if (method === 'get' && !body) {
-      //   let route = 'default';
-      //   if (this._routes[path]) {
-      //     route = path;
-      //   }
-      //   logger.info('Serving: %s', route);
-      //
-      //   let view = this._routes[route];
-      //   if (isFunction(view)) {
-      //     view = view();
-      //   }
-      //   if (view.then) {
-      //     view = await view;
-      //   }
-      //   if (typeof view === 'string') {
-      //     view = {
-      //       statusCode: 200,
-      //       headers: {
-      //         'Content-Type': 'text/html',
-      //         'Cache-Control': 'max-age=86400',
-      //       },
-      //       body: view,
-      //     };
-      //   }
-      //   return view;
-      // }
 
       // set APP_ID and WEBHOOK_SECRET if defined via params
       if (!this._appId) {

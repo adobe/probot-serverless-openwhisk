@@ -9,10 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const OpenWhiskWrapper = require('./src/openwhisk');
+const OpenWhiskWrapper = require('./src/OpenWhiskWrapper.js');
+const ViewsHelper = require('./src/apps/ViewsHelper.js');
+const defaultsApp = require('./src/apps/defaults.js');
 const Logger = require('./src/Logger');
 
 module.exports = {
   OpenWhiskWrapper,
+  ViewsHelper,
   Logger,
+  defaultsApp,
 };
