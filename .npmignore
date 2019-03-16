@@ -4,6 +4,7 @@ npm-debug.log
 .env
 .nyc_output/
 coverage.lcov
+coverage
 test-results.xml
 .circleci
 .github
