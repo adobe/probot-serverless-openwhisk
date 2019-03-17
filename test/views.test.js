@@ -65,6 +65,7 @@ describe('OpenWhisk Wrapper - Defaults', () => {
     });
 
     delete result.headers.date;
+    delete result.headers.etag;
     delete result.headers['x-request-id'];
     delete result.headers['last-modified'];
     assert.deepEqual(result, {
@@ -75,7 +76,6 @@ describe('OpenWhisk Wrapper - Defaults', () => {
         connection: 'close',
         'content-length': '14',
         'content-type': 'text/plain; charset=UTF-8',
-        etag: 'W/"e-169856f76eb"',
         'x-powered-by': 'Express',
       },
       statusCode: 200,
