@@ -25,13 +25,15 @@ probot app into an OpenWhisk action.
 
 3. Add an `index.js`:
     ```js
-    const { OpenWhiskWrapper } = require('@adobe/probot-serverless-openwhisk');
+    const { OpenWhiskWrapper, ViewsHelper } = require('@adobe/probot-serverless-openwhisk');
     const app = require('./src/probot_app.js');
-    const view = require('./src/views/probot.js');
     
     module.exports.main = new OpenWhiskWrapper()
-      .withHandler(app)
-      .withRoute('/probot', view)
+      .withViewsDirectory('./src/views')
+      .withApp(app)
+      .withApp(new ViewsHelper()
+        .withView('/docs', 'docs.hbs')
+        .register())
       .create();
     ```
 
@@ -175,6 +177,12 @@ Example:
 wskbot -s logo.png
 ```
  
+### Specifying the arguments in the `package.json`
+
+Instead of having very a long argument list, the parameters described above can also be specified in
+the `package.json`. see the [action-builder documentation](https://github.com/adobe/openwhisk-action-builder#specifying-arguments-in-the-packagejson)
+for more details. 
+
 ## Notes
 
 ### Bundling

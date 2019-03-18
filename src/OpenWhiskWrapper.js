@@ -13,12 +13,15 @@
 /* eslint-disable no-underscore-dangle */
 
 const crypto = require('crypto');
+const path = require('path');
+const fse = require('fs-extra');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
+const delegator = require('expressjs-openwhisk');
+const hbs = require('hbs');
 const Logger = require('./Logger.js');
-const defaultRoute = require('./views/default');
 
 const ERROR = {
   statusCode: 500,
@@ -27,10 +30,6 @@ const ERROR = {
   },
   body: 'Internal Server Error.',
 };
-
-function isFunction(obj) {
-  return !!(obj && obj.constructor && obj.call && obj.apply);
-}
 
 /**
  * Validate if the payload is valid.
@@ -58,31 +57,27 @@ function validatePayload(secret, payload = '', signature) {
 
 module.exports = class OpenWhiskWrapper {
   constructor() {
-    this._handlers = null;
-    this._routes = {
-      default: defaultRoute,
-    };
+    this._viewsDirectory = [];
+    this._apps = [];
     this._appId = null;
     this._secret = null;
     this._privateKey = null;
     this._githubToken = null;
     this._errors = [];
+    this._webhookPath = '/';
   }
 
-  withHandler(handler) {
-    if (!this._handlers) {
-      this._handlers = [];
-    }
-    if (typeof handler === 'string') {
-      this._handlers.push(resolve(handler));
+  withApp(app) {
+    if (typeof app === 'string') {
+      this._apps.push(resolve(app));
     } else {
-      this._handlers.push(handler);
+      this._apps.push(app);
     }
     return this;
   }
 
-  withRoute(name, template) {
-    this._routes[name] = template;
+  withViewsDirectory(value) {
+    this._viewsDirectory.push(path.resolve(process.cwd(), value));
     return this;
   }
 
@@ -106,7 +101,12 @@ module.exports = class OpenWhiskWrapper {
     return this;
   }
 
-  initProbot(params) {
+  withWebHookPath(value) {
+    this._webhookPath = value;
+    return this;
+  }
+
+  async initProbot(params) {
     if (!this._privateKey) {
       this._privateKey = findPrivateKey();
     }
@@ -116,8 +116,26 @@ module.exports = class OpenWhiskWrapper {
       cert: this._privateKey,
       catchErrors: false,
       githubToken: this._githubToken,
+      webhookPath: this._webhookPath,
     };
     this._probot = createProbot(options);
+    if (this._viewsDirectory.length === 0) {
+      this.withViewsDirectory('./views');
+    }
+    this._probot.server.set('views', this._viewsDirectory);
+    this._probot.logger.debug('Set view directory to %s', this._probot.server.get('views'));
+    const hbsEngine = hbs.create();
+    hbsEngine.localsAsTemplateData(this._probot.server);
+    this._probot.server.engine('hbs', hbsEngine.__express);
+
+    // load pkgJson as express local
+    try {
+      const pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
+      this._probot.server.locals.pkgJson = pkgJson;
+    } catch (e) {
+      this._probot.logger.info('unable to load package.json %s', e);
+    }
+
     this._probot.load((app) => {
       const appOn = app.on;
       // the eventemmitter does not properly propagate errors thrown in the listeners
@@ -134,7 +152,7 @@ module.exports = class OpenWhiskWrapper {
         };
         return appOn.call(app, eventName, wrapper);
       };
-      this._handlers.forEach((handler) => {
+      this._apps.forEach((handler) => {
         handler(app, params);
       });
     });
@@ -145,37 +163,8 @@ module.exports = class OpenWhiskWrapper {
       const {
         __ow_method: method,
         __ow_headers: headers,
-        __ow_path: path,
         __ow_body: body,
       } = params;
-
-      // check for the routes
-      if (method === 'get' && !body) {
-        let route = 'default';
-        if (this._routes[path]) {
-          route = path;
-        }
-        logger.info('Serving: %s', route);
-
-        let view = this._routes[route];
-        if (isFunction(view)) {
-          view = view();
-        }
-        if (view.then) {
-          view = await view;
-        }
-        if (typeof view === 'string') {
-          view = {
-            statusCode: 200,
-            headers: {
-              'Content-Type': 'text/html',
-              'Cache-Control': 'max-age=86400',
-            },
-            body: view,
-          };
-        }
-        return view;
-      }
 
       // set APP_ID and WEBHOOK_SECRET if defined via params
       if (!this._appId) {
@@ -185,59 +174,72 @@ module.exports = class OpenWhiskWrapper {
         this._secret = params.GH_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
       }
 
-      // gather the event data either from params or request
-      let {
-        event, eventId, signature, payload,
-      } = params;
-      if (method === 'post' && headers) {
+      // check if the event is triggered via params.
+      let { event, eventId, payload } = params;
+      const { signature } = params;
+
+      let delegateRequest = true;
+      if (event && eventId && signature && payload) {
+        // validate webhook
+        try {
+          validatePayload(this._secret, payload, signature);
+          payload = JSON.parse(payload);
+        } catch (e) {
+          logger.error(`Error validating payload: ${e.message}`);
+          return ERROR;
+        }
+        logger.debug('payload signature valid.');
+        delegateRequest = false;
+      } else if (method === 'post' && headers) {
+        // ensure payload is usable by probot
         payload = Buffer.from(body, 'base64').toString('utf8');
+        payload = JSON.parse(payload);
+        // eslint-disable-next-line no-param-reassign
+        params.__ow_body = JSON.stringify(payload);
         event = headers['x-github-event'];
         eventId = headers['x-github-delivery'];
-        signature = headers['x-hub-signature'];
-      }
-      if (!payload || !event) {
-        logger.error('no event information.');
-        return ERROR;
       }
 
-      // validate webhook
-      try {
-        validatePayload(this._secret, payload, signature);
-        payload = JSON.parse(payload);
-      } catch (e) {
-        logger.error(`Error validating payload: ${e.message}`);
-        return ERROR;
+      if (eventId && payload && payload.action) {
+        logger.info(`Received event ${eventId} ${event}${payload.action ? (`.${payload.action}`) : ''}`);
       }
-      logger.debug('payload signature valid.');
 
-      logger.debug('intializing probot...');
       try {
-        this.initProbot(params);
+        logger.debug('intializing probot...');
+        await this.initProbot(params);
       } catch (e) {
         logger.error(`Error while loading probot: ${e.stack || e}`);
         return ERROR;
       }
 
       try {
-        logger.info(`Received event ${eventId} ${event}${payload.action ? (`.${payload.action}`) : ''}`);
+        let result = {
+          statusCode: 200,
+          headers: {},
+          body: 'ok\n',
+        };
 
-        // let probot handle the event
-        await this._probot.receive({
-          name: event,
-          payload,
-        });
+        if (delegateRequest) {
+          // delegate via express
+          result = await delegator(this._probot.server)(params);
+        } else {
+          // let probot handle the event
+          await this._probot.receive({
+            name: event,
+            payload,
+          });
+        }
+
         if (this._errors.length > 0) {
           return ERROR;
         }
-        return {
-          statusCode: 200,
-          headers: {
-            'Cache-Control': 'no-store, must-revalidate',
-          },
-          body: JSON.stringify({
-            message: 'ok',
-          }),
-        };
+
+        // set cache control header if not set
+        if (!result.headers['cache-control']) {
+          result.headers['cache-control'] = 'no-store, must-revalidate';
+        }
+
+        return result;
       } catch (err) {
         logger.error(err);
         return ERROR;
