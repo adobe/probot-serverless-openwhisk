@@ -14,6 +14,7 @@
 
 const crypto = require('crypto');
 const path = require('path');
+const fse = require('fs-extra');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
 const { resolve } = require('probot/lib/resolver');
@@ -105,7 +106,7 @@ module.exports = class OpenWhiskWrapper {
     return this;
   }
 
-  initProbot(params) {
+  async initProbot(params) {
     if (!this._privateKey) {
       this._privateKey = findPrivateKey();
     }
@@ -123,7 +124,17 @@ module.exports = class OpenWhiskWrapper {
     }
     this._probot.server.set('views', this._viewsDirectory);
     this._probot.logger.debug('Set view directory to %s', this._probot.server.get('views'));
-    this._probot.server.engine('hbs', hbs.__express);
+    const hbsEngine = hbs.create();
+    hbsEngine.localsAsTemplateData(this._probot.server);
+    this._probot.server.engine('hbs', hbsEngine.__express);
+
+    // load pkgJson as express local
+    try {
+      const pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
+      this._probot.server.locals.pkgJson = pkgJson;
+    } catch (e) {
+      this._probot.logger.info('unable to load package.json %s', e);
+    }
 
     this._probot.load((app) => {
       const appOn = app.on;
@@ -195,7 +206,7 @@ module.exports = class OpenWhiskWrapper {
 
       try {
         logger.debug('intializing probot...');
-        this.initProbot(params);
+        await this.initProbot(params);
       } catch (e) {
         logger.error(`Error while loading probot: ${e.stack || e}`);
         return ERROR;

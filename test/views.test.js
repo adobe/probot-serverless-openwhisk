@@ -17,6 +17,7 @@ process.env.LOG_LEVEL = 'debug';
 const assert = require('assert');
 const path = require('path');
 const { OpenWhiskWrapper, ViewsHelper } = require('../index.js');
+const pkgJson = require('../package.json');
 
 describe('OpenWhisk Wrapper - Defaults', () => {
   it('Delivers Hello world.', async () => {
@@ -80,5 +81,52 @@ describe('OpenWhisk Wrapper - Defaults', () => {
       },
       statusCode: 200,
     });
+  });
+
+  it('Can set redirect.', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey('dummy')
+      .withApp(new ViewsHelper()
+        .withRedirect('/', '/wskbot')
+        .register())
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/',
+    });
+    delete result.headers.date;
+    delete result.headers['x-request-id'];
+    assert.deepEqual(result, {
+      body: 'Found. Redirecting to /wskbot',
+      headers: {
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '29',
+        'content-type': 'text/plain; charset=utf-8',
+        location: '/wskbot',
+        vary: 'Accept',
+        'x-powered-by': 'Express',
+      },
+      statusCode: 302,
+    });
+  });
+
+  it('Can deliver default view', async () => {
+    // eslint-disable-next-line no-new
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey('dummy')
+      .withApp(new ViewsHelper()
+        .withView('/wskbot', 'wskbot.hbs')
+        .register())
+      .create();
+
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/wskbot',
+    });
+    const match = `<h1>${pkgJson.name} v${pkgJson.version}</h1>`;
+    assert.ok(result.body.indexOf(match) > 0);
   });
 });

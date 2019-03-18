@@ -13,10 +13,10 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ name }} | built with Probot</title>
+    <title>{{ pkgJson.name }} | built with Probot</title>
   </head>
   <body>
-    <h1>{{ name }} v{{ version }}</h1>
+    <h1>{{ pkgJson.name }} v{{ pkgJson.version }}</h1>
     <p>This bot was built using <a href="https://github.com/probot/probot">Probot</a>, a framework for building GitHub Apps.</p>
     <p><a href="https://probot.github.io/docs/" class="btn btn-outline mr-2">Documentation</a></p>
     <p><a href="https://probot-slackin.herokuapp.com/" class="btn btn-outline">Chat on Slack</a></p>

@@ -12,11 +12,9 @@
 const Logger = require('./src/Logger');
 const OpenWhiskWrapper = require('./src/OpenWhiskWrapper.js');
 const ViewsHelper = require('./src/apps/ViewsHelper.js');
-const defaultsApp = require('./src/apps/defaults.js');
 
 module.exports = {
   OpenWhiskWrapper,
   ViewsHelper,
   Logger,
-  defaultsApp,
 };

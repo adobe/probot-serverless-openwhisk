@@ -16,6 +16,7 @@ class ViewsHelper {
   constructor() {
     this._views = [];
     this._statics = [];
+    this._redirects = [];
   }
 
   withView(route, template) {
@@ -28,6 +29,11 @@ class ViewsHelper {
     return this;
   }
 
+  withRedirect(route, dest) {
+    this._redirects[route] = dest;
+    return this;
+  }
+
   register() {
     return this.init.bind(this);
   }
@@ -36,7 +42,7 @@ class ViewsHelper {
     const router = app.route();
     Object.keys(this._views).forEach((route) => {
       const view = this._views[route];
-      app.log.info('register view: %s -> %s', route, view);
+      app.log.debug('register view: %s -> %s', route, view);
       router.get(route, async (req, res) => {
         res.render(view);
       });
@@ -44,8 +50,14 @@ class ViewsHelper {
 
     Object.keys(this._statics).forEach((route) => {
       const dir = this._statics[route];
-      app.log.info('register static: %s -> %s', route, dir);
+      app.log.debug('register static: %s -> %s', route, dir);
       router.use(route, express.static(dir));
+    });
+
+    Object.keys(this._redirects).forEach((route) => {
+      const dir = this._redirects[route];
+      app.log.debug('register redirect: %s -> %s', route, dir);
+      router.get(route, (req, res) => res.redirect(dir));
     });
   }
 }

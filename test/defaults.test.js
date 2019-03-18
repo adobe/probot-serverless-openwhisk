@@ -15,8 +15,7 @@
 process.env.LOG_LEVEL = 'debug';
 
 const assert = require('assert');
-const { OpenWhiskWrapper, defaultsApp } = require('../index.js');
-const pkgJson = require('../package.json');
+const { OpenWhiskWrapper } = require('../index.js');
 
 describe('OpenWhisk Wrapper - Defaults', () => {
   it('Delivers PING', async () => {
@@ -42,63 +41,5 @@ describe('OpenWhisk Wrapper - Defaults', () => {
       },
       statusCode: 200,
     });
-  });
-
-  it('Redirects to default view', async () => {
-    // eslint-disable-next-line no-new
-    const main = new OpenWhiskWrapper()
-      .withGithubPrivateKey('dummy')
-      .withApp(defaultsApp)
-      .create();
-
-    const result = await main({
-      __ow_method: 'get',
-      __ow_path: '/',
-    });
-    delete result.headers.date;
-    delete result.headers['x-request-id'];
-    assert.deepEqual(result, {
-      body: 'Found. Redirecting to /wskbot',
-      headers: {
-        'cache-control': 'no-store, must-revalidate',
-        connection: 'close',
-        'content-length': '29',
-        'content-type': 'text/plain; charset=utf-8',
-        location: '/wskbot',
-        vary: 'Accept',
-        'x-powered-by': 'Express',
-      },
-      statusCode: 302,
-    });
-  });
-
-  it('Can deliver default view', async () => {
-    // eslint-disable-next-line no-new
-    const main = new OpenWhiskWrapper()
-      .withGithubPrivateKey('dummy')
-      .withApp(defaultsApp)
-      .create();
-
-    const result = await main({
-      __ow_method: 'get',
-      __ow_path: '/wskbot',
-    });
-    const match = `<h1>${pkgJson.name} v${pkgJson.version}</h1>`;
-    assert.ok(result.body.indexOf(match) > 0);
-  });
-
-  it('Can use default view', async () => {
-    // eslint-disable-next-line no-new
-    const main = new OpenWhiskWrapper()
-      .withGithubPrivateKey('dummy')
-      .withApp(defaultsApp)
-      .create();
-
-    const result = await main({
-      __ow_method: 'get',
-      __ow_path: '/wskbot',
-    });
-    const match = `<h1>${pkgJson.name} v${pkgJson.version}</h1>`;
-    assert.ok(result.body.indexOf(match) > 0);
   });
 });
