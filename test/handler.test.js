@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+process.env.LOG_LEVEL = 'debug';
 
 /* eslint-env mocha */
 /* eslint-disable global-require,no-underscore-dangle */
@@ -36,12 +37,13 @@ class TestHandler {
   }
 }
 
-async function createTestPayload(testContext) {
-  const payload = await fs.readFile(PAYLOAD_ISSUES_OPENED, 'utf-8');
+async function createTestPayload(testContext, rootPath = '/') {
+  let payload = await fs.readFile(PAYLOAD_ISSUES_OPENED, 'utf-8');
+  payload = JSON.stringify(JSON.parse(payload));
   const signature = crypto.createHmac('sha1', WEBHOOK_SECRET).update(payload, 'utf-8').digest('hex');
   return {
     __ow_method: 'post',
-    __ow_path: '/static.txt',
+    __ow_path: rootPath,
     __ow_body: Buffer.from(payload).toString('base64'),
     __ow_headers: {
       'x-github-event': 'issues.opened',
@@ -83,19 +85,86 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
+      .withGithubToken('dummy')
       .create();
 
     const result = await main(await createTestPayload());
 
     assert.ok(testHandler.invoked);
     assert.equal(testHandler.testParam, 'test-param');
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
+    });
+  });
+
+  it('invokes the handler on different webhook root', async () => {
+    const testHandler = new TestHandler();
+
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
+      .withWebhookSecret(WEBHOOK_SECRET)
+      .withApp(testHandler.invoker())
+      .withGithubToken('dummy')
+      .withWebHookPath('/somepath')
+      .create();
+
+    const result = await main(await createTestPayload({}, '/somepath'));
+
+    assert.ok(testHandler.invoked);
+    assert.equal(testHandler.testParam, 'test-param');
+    delete result.headers.date;
+    assert.deepEqual(result, {
+      body: 'ok\n',
+      statusCode: 200,
+      headers: {
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
+      },
+    });
+  });
+
+  it('does not invoke the handler on different webhook root', async () => {
+    const testHandler = new TestHandler();
+
+    const main = new OpenWhiskWrapper()
+      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
+      .withWebhookSecret(WEBHOOK_SECRET)
+      .withApp(testHandler.invoker())
+      .withGithubToken('dummy')
+      .withWebHookPath('/wrong')
+      .create();
+
+    const result = await main(await createTestPayload({}, '/somepath'));
+
+    assert.ok(!testHandler.invoked);
+    assert.equal(testHandler.testParam, 'test-param');
+    delete result.headers.date;
+    assert.deepEqual(result, {
+      body: '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /somepath</pre>\n</body>\n</html>\n',
+      headers: {
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '148',
+        'content-security-policy': "default-src 'self'",
+        'content-type': 'text/html; charset=utf-8',
+        'x-content-type-options': 'nosniff',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
+      },
+      statusCode: 404,
     });
   });
 
@@ -105,18 +174,21 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
+      .withGithubToken('dummy')
       .create();
 
     const result = await main(await createRawTestPayload());
 
     assert.ok(testHandler.invoked);
     assert.equal(testHandler.testParam, 'test-param');
+
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
       },
     });
   });
@@ -127,18 +199,24 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret('notmysecret')
-      .withHandler(testHandler.invoker())
+      .withApp(testHandler.invoker())
+      .withGithubToken('dummy')
       .create();
 
     const result = await main(await createTestPayload());
 
     assert.ok(!testHandler.invoked);
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: 'Internal Server Error.',
-      statusCode: 500,
+      body: 'Error: signature does not match event payload and secret',
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '56',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
+      statusCode: 400,
     });
   });
 
@@ -149,8 +227,9 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler(testHandler1.invoker())
-      .withHandler(testHandler2.invoker())
+      .withApp(testHandler1.invoker())
+      .withApp(testHandler2.invoker())
+      .withGithubToken('dummy')
       .create();
 
     const result = await main(await createTestPayload());
@@ -159,11 +238,16 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.equal(testHandler1.testParam, 'test-param');
     assert.ok(testHandler2.invoked);
     assert.equal(testHandler2.testParam, 'test-param');
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
     });
   });
@@ -172,18 +256,24 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js')
+      .withApp('./test/fixtures/issues-opened-handler.js')
+      .withGithubToken('dummy')
       .create();
 
     const testContext = {};
     const result = await main(await createTestPayload(testContext));
 
     assert.ok(testContext.invoked);
+    delete result.headers.date;
     assert.deepEqual(result, {
-      body: '{"message":"ok"}',
+      body: 'ok\n',
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, must-revalidate',
+        connection: 'close',
+        'content-length': '3',
+        'x-powered-by': 'Express',
+        'x-request-id': '1234',
       },
     });
   });
@@ -192,7 +282,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const wrapper = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js');
+      .withApp('./test/fixtures/issues-opened-handler.js');
 
     const payload = await createTestPayload({});
     payload.GH_APP_ID = '1234';
@@ -207,7 +297,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const wrapper = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js');
+      .withApp('./test/fixtures/issues-opened-handler.js');
 
     const payload = await createTestPayload({});
     process.env.APP_ID = '1234';
@@ -222,7 +312,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const wrapper = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js')
+      .withApp('./test/fixtures/issues-opened-handler.js')
       .withAppId(1234);
 
     const payload = await createTestPayload({});
@@ -235,6 +325,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
   it('error during init probot sends 500', async () => {
     const wrapper = new OpenWhiskWrapper()
       .withWebhookSecret(WEBHOOK_SECRET);
+    wrapper._apps = null;
     const payload = await createTestPayload({});
     const result = await wrapper.create()(payload);
     assert.equal(result.statusCode, 500);
@@ -244,7 +335,8 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
       .withWebhookSecret(WEBHOOK_SECRET)
-      .withHandler('./test/fixtures/issues-opened-handler.js')
+      .withApp('./test/fixtures/issues-opened-handler.js')
+      .withGithubToken('dummy')
       .create();
 
     const testContext = {
