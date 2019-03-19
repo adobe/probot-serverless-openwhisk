@@ -1,6 +1,6 @@
 {
   "name": "@adobe/probot-serverless-openwhisk",
-  "version": "0.14.2-pre.1",
+  "version": "1.0.0",
   "description": "Probot Serverless OpenWisk",
   "license": "Apache-2.0",
   "repository": "https://github.com/adobe/probot-serverless-openwhisk",
@@ -39,6 +39,7 @@
     "@semantic-release/changelog": "^3.0.2",
     "@semantic-release/git": "^7.0.8",
     "@semantic-release/github": "^5.2.10",
+    "@semantic-release/npm": "^5.1.4",
     "ajv": "^6.10.0",
     "codecov": "^3.2.0",
     "commitizen": "^3.0.7",
