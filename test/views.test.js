@@ -40,7 +40,7 @@ describe('OpenWhisk Wrapper - Defaults', () => {
     assert.deepEqual(result, {
       body: 'Hello, world.\n',
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '14',
         'content-type': 'text/html; charset=utf-8',
@@ -101,7 +101,7 @@ describe('OpenWhisk Wrapper - Defaults', () => {
     assert.deepEqual(result, {
       body: 'Found. Redirecting to /wskbot',
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '29',
         'content-type': 'text/plain; charset=utf-8',

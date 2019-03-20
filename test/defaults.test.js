@@ -34,7 +34,7 @@ describe('OpenWhisk Wrapper - Defaults', () => {
     assert.deepEqual(result, {
       body: 'PONG',
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '4',
         'x-powered-by': 'Express',

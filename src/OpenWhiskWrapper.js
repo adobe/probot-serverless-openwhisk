@@ -236,7 +236,7 @@ module.exports = class OpenWhiskWrapper {
 
         // set cache control header if not set
         if (!result.headers['cache-control']) {
-          result.headers['cache-control'] = 'no-store, must-revalidate';
+          result.headers['cache-control'] = 'no-store, private, must-revalidate';
         }
 
         return result;
@@ -249,6 +249,9 @@ module.exports = class OpenWhiskWrapper {
     return async (params) => {
       // setup logger if configured
       Logger.init(logger, params);
+
+      // eslint-disable-next-line no-underscore-dangle
+      logger.debug('Params: "%s" "%s"\n', params.__ow_method, params.__ow_path || '/', params.__ow_headers);
 
       // run actual action
       const result = await run(params);
