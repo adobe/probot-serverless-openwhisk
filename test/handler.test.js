@@ -98,7 +98,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
       body: 'ok\n',
       statusCode: 200,
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '3',
         'x-powered-by': 'Express',
@@ -127,7 +127,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
       body: 'ok\n',
       statusCode: 200,
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '3',
         'x-powered-by': 'Express',
@@ -155,7 +155,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.deepEqual(result, {
       body: '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /somepath</pre>\n</body>\n</html>\n',
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '148',
         'content-security-policy': "default-src 'self'",
@@ -188,7 +188,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
       body: 'ok\n',
       statusCode: 200,
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
       },
     });
   });
@@ -210,7 +210,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     assert.deepEqual(result, {
       body: 'Error: signature does not match event payload and secret',
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '56',
         'x-powered-by': 'Express',
@@ -243,7 +243,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
       body: 'ok\n',
       statusCode: 200,
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '3',
         'x-powered-by': 'Express',
@@ -269,7 +269,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
       body: 'ok\n',
       statusCode: 200,
       headers: {
-        'cache-control': 'no-store, must-revalidate',
+        'cache-control': 'no-store, private, must-revalidate',
         connection: 'close',
         'content-length': '3',
         'x-powered-by': 'Express',
