@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v1.0.3...v2.0.0) (2019-03-22)
+
+
+### Features
+
+* **logging:** Removed Logger from exports in favour and use action builder ([f664ee8](https://github.com/adobe/probot-serverless-openwhisk/commit/f664ee8))
+
+
+### BREAKING CHANGES
+
+* **logging:** Logger no longer exported.
+
 ## [1.0.3](https://github.com/adobe/probot-serverless-openwhisk/compare/v1.0.2...v1.0.3) (2019-03-20)
 
 
