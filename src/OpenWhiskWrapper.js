@@ -17,11 +17,11 @@ const path = require('path');
 const fse = require('fs-extra');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
+const logWrapper = require('@adobe/openwhisk-action-builder/src/logging').logger;
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
 const delegator = require('expressjs-openwhisk');
 const hbs = require('hbs');
-const Logger = require('./Logger.js');
 
 const ERROR = {
   statusCode: 500,
@@ -248,7 +248,7 @@ module.exports = class OpenWhiskWrapper {
 
     return async (params) => {
       // setup logger if configured
-      Logger.init(logger, params);
+      logWrapper.init(logger, params);
 
       // eslint-disable-next-line no-underscore-dangle
       logger.debug('Params: "%s" "%s"\n', params.__ow_method, params.__ow_path || '/', params.__ow_headers);
