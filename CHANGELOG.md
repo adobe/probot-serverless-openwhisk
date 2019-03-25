@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.0.0...v2.1.0) (2019-03-25)
+
+
+### Features
+
+* **express:** Use serverless-http (via new action builder) ([1f12c6c](https://github.com/adobe/probot-serverless-openwhisk/commit/1f12c6c)), closes [#44](https://github.com/adobe/probot-serverless-openwhisk/issues/44)
+
 # [2.0.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v1.0.3...v2.0.0) (2019-03-22)
 
 
