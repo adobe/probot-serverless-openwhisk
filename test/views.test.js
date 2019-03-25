@@ -41,7 +41,6 @@ describe('OpenWhisk Wrapper - Defaults', () => {
       body: 'Hello, world.\n',
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
-        connection: 'close',
         'content-length': '14',
         'content-type': 'text/html; charset=utf-8',
         etag: 'W/"e-AbqYs8kBJvFFd9Wx/bH/6dM2RGk"',
@@ -74,7 +73,6 @@ describe('OpenWhisk Wrapper - Defaults', () => {
       headers: {
         'accept-ranges': 'bytes',
         'cache-control': 'public, max-age=0',
-        connection: 'close',
         'content-length': '14',
         'content-type': 'text/plain; charset=UTF-8',
         'x-powered-by': 'Express',
@@ -102,7 +100,6 @@ describe('OpenWhisk Wrapper - Defaults', () => {
       body: 'Found. Redirecting to /wskbot',
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
-        connection: 'close',
         'content-length': '29',
         'content-type': 'text/plain; charset=utf-8',
         location: '/wskbot',

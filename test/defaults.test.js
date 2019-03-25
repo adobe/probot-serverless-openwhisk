@@ -35,8 +35,6 @@ describe('OpenWhisk Wrapper - Defaults', () => {
       body: 'PONG',
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
-        connection: 'close',
-        'content-length': '4',
         'x-powered-by': 'Express',
       },
       statusCode: 200,

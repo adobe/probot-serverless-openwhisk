@@ -20,7 +20,7 @@ const { logger } = require('probot/lib/logger');
 const logWrapper = require('@adobe/openwhisk-action-builder/src/logging').logger;
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
-const delegator = require('expressjs-openwhisk');
+const expressify = require('@adobe/openwhisk-action-builder/src/expressify');
 const hbs = require('hbs');
 
 const ERROR = {
@@ -220,8 +220,7 @@ module.exports = class OpenWhiskWrapper {
         };
 
         if (delegateRequest) {
-          // delegate via express
-          result = await delegator(this._probot.server)(params);
+          result = await expressify(this._probot.server)(params);
         } else {
           // let probot handle the event
           await this._probot.receive({
