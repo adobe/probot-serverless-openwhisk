@@ -26,7 +26,7 @@ const hbs = require('hbs');
 const ERROR = {
   statusCode: 500,
   headers: {
-    'Cache-Control': 'no-store, must-revalidate',
+    'Cache-Control': 'no-store, private, must-revalidate',
   },
   body: 'Internal Server Error.',
 };
@@ -63,7 +63,6 @@ module.exports = class OpenWhiskWrapper {
     this._secret = null;
     this._privateKey = null;
     this._githubToken = null;
-    this._errors = [];
     this._webhookPath = '/';
   }
 
@@ -118,25 +117,25 @@ module.exports = class OpenWhiskWrapper {
       githubToken: this._githubToken,
       webhookPath: this._webhookPath,
     };
-    this._probot = createProbot(options);
+    const probot = createProbot(options);
     if (this._viewsDirectory.length === 0) {
       this.withViewsDirectory('./views');
     }
-    this._probot.server.set('views', this._viewsDirectory);
-    this._probot.logger.debug('Set view directory to %s', this._probot.server.get('views'));
+    probot.server.set('views', this._viewsDirectory);
+    probot.logger.debug('Set view directory to %s', probot.server.get('views'));
     const hbsEngine = hbs.create();
-    hbsEngine.localsAsTemplateData(this._probot.server);
-    this._probot.server.engine('hbs', hbsEngine.__express);
-
+    hbsEngine.localsAsTemplateData(probot.server);
+    probot.server.engine('hbs', hbsEngine.__express);
+    probot._handlerErrors = [];
     // load pkgJson as express local
     try {
       const pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
-      this._probot.server.locals.pkgJson = pkgJson;
+      probot.server.locals.pkgJson = pkgJson;
     } catch (e) {
-      this._probot.logger.info('unable to load package.json %s', e);
+      probot.logger.info('unable to load package.json %s', e);
     }
 
-    this._probot.load((app) => {
+    probot.load((app) => {
       const appOn = app.on;
       // the eventemmitter does not properly propagate errors thrown in the listeners
       // so we intercept the registration and wrap it with our own logic.
@@ -146,7 +145,7 @@ module.exports = class OpenWhiskWrapper {
           try {
             return await listener.apply(this._handler, args);
           } catch (e) {
-            this._errors.push(e);
+            probot._handlerErrors.push(e);
             throw e;
           }
         };
@@ -156,6 +155,8 @@ module.exports = class OpenWhiskWrapper {
         handler(app, params);
       });
     });
+
+    return probot;
   }
 
   create() {
@@ -191,11 +192,11 @@ module.exports = class OpenWhiskWrapper {
         logger.debug('payload signature valid.');
         delegateRequest = false;
       } else if (method === 'post' && headers) {
-        // ensure payload is usable by probot
-        payload = Buffer.from(body, 'base64').toString('utf8');
-        payload = JSON.parse(payload);
         // eslint-disable-next-line no-param-reassign
-        params.__ow_body = JSON.stringify(payload);
+        params.__ow_body = Buffer.from(body, 'base64').toString('utf8');
+        if (headers['content-type'] === 'application/json') {
+          payload = JSON.parse(params.__ow_body);
+        }
         event = headers['x-github-event'];
         eventId = headers['x-github-delivery'];
       }
@@ -204,9 +205,10 @@ module.exports = class OpenWhiskWrapper {
         logger.info(`Received event ${eventId} ${event}${payload.action ? (`.${payload.action}`) : ''}`);
       }
 
+      let probot;
       try {
         logger.debug('intializing probot...');
-        await this.initProbot(params);
+        probot = await this.initProbot(params);
       } catch (e) {
         logger.error(`Error while loading probot: ${e.stack || e}`);
         return ERROR;
@@ -220,16 +222,16 @@ module.exports = class OpenWhiskWrapper {
         };
 
         if (delegateRequest) {
-          result = await expressify(this._probot.server)(params);
+          result = await expressify(probot.server)(params);
         } else {
           // let probot handle the event
-          await this._probot.receive({
+          await probot.receive({
             name: event,
             payload,
           });
         }
 
-        if (this._errors.length > 0) {
+        if (probot._handlerErrors.length > 0) {
           return ERROR;
         }
 
