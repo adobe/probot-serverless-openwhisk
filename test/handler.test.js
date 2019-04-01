@@ -331,7 +331,24 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const testContext = {
       fail: true,
     };
-    const result = await main(await createTestPayload(testContext));
-    assert.equal(result.statusCode, 500);
+    const resultErr = await main(await createTestPayload(testContext));
+    assert.equal(resultErr.statusCode, 500);
+
+    // send 2nd request which should succeed
+    const result = await main({
+      __ow_method: 'get',
+      __ow_path: '/ping',
+    });
+
+    delete result.headers.date;
+    delete result.headers['x-request-id'];
+    assert.deepEqual(result, {
+      body: 'PONG',
+      headers: {
+        'cache-control': 'no-store, private, must-revalidate',
+        'x-powered-by': 'Express',
+      },
+      statusCode: 200,
+    });
   });
 });
