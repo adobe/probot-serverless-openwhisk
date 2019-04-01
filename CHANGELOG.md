@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.0...v2.1.1) (2019-04-01)
+
+
+### Bug Fixes
+
+* **probot:** Avoid sticky errors ([#49](https://github.com/adobe/probot-serverless-openwhisk/issues/49)) ([dbbabe0](https://github.com/adobe/probot-serverless-openwhisk/commit/dbbabe0))
+
 # [2.1.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.0.0...v2.1.0) (2019-03-25)
 
 
