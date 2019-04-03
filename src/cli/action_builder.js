@@ -42,7 +42,7 @@ module.exports = class ActionBuilder extends OWActionBuilder {
     }
 
     this._externals = pkgConfig.externals;
-    this._kind = 'nodejs:10-fat';
+    this._kind = 'nodejs:10';
   }
 
   async updateArchive(archive, packageJson) {

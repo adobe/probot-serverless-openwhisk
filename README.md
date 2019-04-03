@@ -45,7 +45,7 @@ probot app into an OpenWhisk action.
     ```
 5. Deploy the OpenWhisk action
     ```sh
-    $ wsk action update probot-openwhisk-example --kind nodejs:10-fat --web raw dist/probot-openwhisk-example.zip
+    $ wsk action update probot-openwhisk-example --kind nodejs:10 --web raw dist/probot-openwhisk-example.zip
     ```
 
 6. Set the correct [GitHub app settings](https://github.com/settings/apps):    
@@ -101,7 +101,7 @@ With no arguments, the `wskbot` just bundles your code into the respective `acti
 $ wskbot
 ok: created action: dist/probot-openwhisk-example.zip.
 Deploy to openwhisk the following command or specify --deploy on the commandline:
-$ wsk action update probot-openwhisk-example --kind nodejs:10-fat --web raw dist/probot-openwhisk-example.zip
+$ wsk action update probot-openwhisk-example --kind nodejs:10 --web raw dist/probot-openwhisk-example.zip
 
 Githup App Settings:
 Homepage URL: https://adobeioruntime.net/api/v1/web/tripod/default/probot-openwhisk-example/probot
