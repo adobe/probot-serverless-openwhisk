@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.2...v2.1.3) (2019-04-03)
+
+
+### Bug Fixes
+
+* **deploy:** switch to default nodejs10 container ([ea3a1ab](https://github.com/adobe/probot-serverless-openwhisk/commit/ea3a1ab)), closes [#42](https://github.com/adobe/probot-serverless-openwhisk/issues/42)
+
 ## [2.1.2](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.1...v2.1.2) (2019-04-01)
 
 
