@@ -11,7 +11,6 @@
  */
 
 /* eslint-disable no-console */
-
 const OWCLI = require('@adobe/openwhisk-action-builder').CLI;
 
 class CLI extends OWCLI {
