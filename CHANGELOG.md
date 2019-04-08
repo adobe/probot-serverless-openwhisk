@@ -1,3 +1,10 @@
+## [2.1.5](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.4...v2.1.5) (2019-04-08)
+
+
+### Bug Fixes
+
+* **test:** ensure latest mocha works ([f8a1982](https://github.com/adobe/probot-serverless-openwhisk/commit/f8a1982))
+
 ## [2.1.4](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.3...v2.1.4) (2019-04-03)
 
 
