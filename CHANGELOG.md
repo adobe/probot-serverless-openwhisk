@@ -1,3 +1,10 @@
+## [2.1.6](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.5...v2.1.6) (2019-04-12)
+
+
+### Bug Fixes
+
+* **package:** update probot to version 9.2.4 ([2405a48](https://github.com/adobe/probot-serverless-openwhisk/commit/2405a48)), closes [#56](https://github.com/adobe/probot-serverless-openwhisk/issues/56)
+
 ## [2.1.5](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.4...v2.1.5) (2019-04-08)
 
 
