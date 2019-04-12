@@ -126,7 +126,6 @@ module.exports = class OpenWhiskWrapper {
     const hbsEngine = hbs.create();
     hbsEngine.localsAsTemplateData(probot.server);
     probot.server.engine('hbs', hbsEngine.__express);
-    probot._handlerErrors = [];
     // load pkgJson as express local
     try {
       const pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
@@ -136,21 +135,6 @@ module.exports = class OpenWhiskWrapper {
     }
 
     probot.load((app) => {
-      const appOn = app.on;
-      // the eventemmitter does not properly propagate errors thrown in the listeners
-      // so we intercept the registration and wrap it with our own logic.
-      // eslint-disable-next-line no-param-reassign
-      app.on = (eventName, listener) => {
-        const wrapper = async (...args) => {
-          try {
-            return await listener.apply(this._handler, args);
-          } catch (e) {
-            probot._handlerErrors.push(e);
-            throw e;
-          }
-        };
-        return appOn.call(app, eventName, wrapper);
-      };
       this._apps.forEach((handler) => {
         handler(app, params);
       });
@@ -229,10 +213,6 @@ module.exports = class OpenWhiskWrapper {
             name: event,
             payload,
           });
-        }
-
-        if (probot._handlerErrors.length > 0) {
-          return ERROR;
         }
 
         // set cache control header if not set
