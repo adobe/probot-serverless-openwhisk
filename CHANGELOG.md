@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.6...v2.2.0) (2019-04-15)
+
+
+### Features
+
+* **init:** pass probot options ([#59](https://github.com/adobe/probot-serverless-openwhisk/issues/59)) ([6ae62d0](https://github.com/adobe/probot-serverless-openwhisk/commit/6ae62d0)), closes [#58](https://github.com/adobe/probot-serverless-openwhisk/issues/58)
+
 ## [2.1.6](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.1.5...v2.1.6) (2019-04-12)
 
 
