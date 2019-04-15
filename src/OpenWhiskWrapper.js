@@ -128,15 +128,14 @@ module.exports = class OpenWhiskWrapper {
     probot.server.engine('hbs', hbsEngine.__express);
     // load pkgJson as express local
     try {
-      const pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
-      probot.server.locals.pkgJson = pkgJson;
+      probot.server.locals.pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
     } catch (e) {
       probot.logger.info('unable to load package.json %s', e);
     }
 
     probot.load((app) => {
       this._apps.forEach((handler) => {
-        handler(app, params);
+        handler(app, params, options);
       });
     });
 
