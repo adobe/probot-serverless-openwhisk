@@ -38,7 +38,8 @@ module.exports = class ActionBuilder extends OWActionBuilder {
       this._privateKey = findPrivateKey();
     }
     if (!this._privateKey) {
-      throw new Error('No Probot-App private key set nor cannot be found in your directory.');
+      this.log.warn(chalk`{yellow warn:} No Github-App private key set and none can be found in your directory.
+      If this is intended, make sure the key is available to the action via {grey GH_APP_PRIVATE_KEY} parameter.`);
     }
 
     this._externals = pkgConfig.externals;
@@ -48,11 +49,13 @@ module.exports = class ActionBuilder extends OWActionBuilder {
   async updateArchive(archive, packageJson) {
     await super.updateArchive(archive, packageJson);
 
-    // add the private key
-    if (typeof this._privateKey === 'string') {
-      archive.file(this._privateKey, { name: GITHUB_PRIVATE_KEY_FILE });
-    } else {
-      archive.append(this._privateKey, { name: GITHUB_PRIVATE_KEY_FILE });
+    if (this._privateKey) {
+      // add the private key
+      if (typeof this._privateKey === 'string') {
+        archive.file(this._privateKey, { name: GITHUB_PRIVATE_KEY_FILE });
+      } else {
+        archive.append(this._privateKey, { name: GITHUB_PRIVATE_KEY_FILE });
+      }
     }
 
     // process and generate the .env file
@@ -61,7 +64,9 @@ module.exports = class ActionBuilder extends OWActionBuilder {
       env = dotenv.parse(await fse.readFile(this._env));
       delete env.PRIVATE_KEY;
     }
-    env.PRIVATE_KEY_PATH = GITHUB_PRIVATE_KEY_FILE;
+    if (this._privateKey) {
+      env.PRIVATE_KEY_PATH = GITHUB_PRIVATE_KEY_FILE;
+    }
     archive.append(ActionBuilder.toEnv(env), { name: '.env' });
   }
 

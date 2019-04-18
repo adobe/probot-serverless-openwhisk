@@ -106,9 +106,6 @@ module.exports = class OpenWhiskWrapper {
   }
 
   async initProbot(params) {
-    if (!this._privateKey) {
-      this._privateKey = findPrivateKey();
-    }
     const options = {
       id: this._appId,
       secret: this._secret,
@@ -150,12 +147,15 @@ module.exports = class OpenWhiskWrapper {
         __ow_body: body,
       } = params;
 
-      // set APP_ID and WEBHOOK_SECRET if defined via params
+      // set APP_ID, WEBHOOK_SECRET and PRIVATE_KEY if defined via params
       if (!this._appId) {
-        this._appId = params.GH_APP_ID || process.env.APP_ID;
+        this._appId = params.GH_APP_ID;
       }
       if (!this._secret) {
-        this._secret = params.GH_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET;
+        this._secret = params.GH_APP_WEBHOOK_SECRET;
+      }
+      if (!this._privateKey) {
+        this._privateKey = params.GH_APP_PRIVATE_KEY || findPrivateKey();
       }
 
       // check if the event is triggered via params.
@@ -231,7 +231,7 @@ module.exports = class OpenWhiskWrapper {
       logWrapper.init(logger, params);
 
       // eslint-disable-next-line no-underscore-dangle
-      logger.debug('Params: "%s" "%s"\n', params.__ow_method, params.__ow_path || '/', params.__ow_headers);
+      logger.debug('>> %s %s"\n', (params.__ow_method || 'get').toUpperCase(), params.__ow_path || '/', params.__ow_headers);
 
       // run actual action
       const result = await run(params);
