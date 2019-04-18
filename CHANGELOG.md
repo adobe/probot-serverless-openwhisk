@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.2.1...v3.0.0) (2019-04-18)
+
+
+### Features
+
+* **action:** allow githup app private key to be specified via action params ([#65](https://github.com/adobe/probot-serverless-openwhisk/issues/65)) ([8fdf044](https://github.com/adobe/probot-serverless-openwhisk/commit/8fdf044)), closes [#64](https://github.com/adobe/probot-serverless-openwhisk/issues/64)
+
+
+### BREAKING CHANGES
+
+* **action:** The GH_WEBHOOK_SECRET param in now called GH_APP_WEBHOOK_SECRET.
+* **action:** the secret and appId can no longer be loaded from env.APP_ID and env.WEBHOOK_SECRET
+
 ## [2.2.1](https://github.com/adobe/probot-serverless-openwhisk/compare/v2.2.0...v2.2.1) (2019-04-18)
 
 
