@@ -267,34 +267,20 @@ describe('OpenWhisk Wrapper - Handler', () => {
     });
   });
 
-  it('it can set APP_ID and WEBHOOK_SECRET from params', async () => {
+  it('it can set APP_ID, WEBHOOK_SECRET, and PRIVATE_KEY from params', async () => {
+    const privateKey = await fs.readFile(PRIVATE_KEY_PATH);
     const wrapper = new OpenWhiskWrapper()
-      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
-      .withWebhookSecret(WEBHOOK_SECRET)
       .withApp('./test/fixtures/issues-opened-handler.js');
 
     const payload = await createTestPayload({});
     payload.GH_APP_ID = '1234';
-    payload.GH_WEBHOOK_SECRET = 'test';
+    payload.GH_APP_WEBHOOK_SECRET = 'test';
+    payload.GH_APP_PRIVATE_KEY = privateKey;
     await wrapper.create()(payload);
 
-    assert.ok(wrapper._appId, '1234');
-    assert.ok(wrapper._secret, 'test');
-  });
-
-  it('it can set APP_ID and WEBHOOK_SECRET from process.env', async () => {
-    const wrapper = new OpenWhiskWrapper()
-      .withGithubPrivateKey(await fs.readFile(PRIVATE_KEY_PATH))
-      .withWebhookSecret(WEBHOOK_SECRET)
-      .withApp('./test/fixtures/issues-opened-handler.js');
-
-    const payload = await createTestPayload({});
-    process.env.APP_ID = '1234';
-    process.env.WEBHOOK_SECRET = 'test';
-    await wrapper.create()(payload);
-
-    assert.ok(wrapper._appId, '1234');
-    assert.ok(wrapper._secret, 'test');
+    assert.equal(wrapper._appId, '1234');
+    assert.equal(wrapper._secret, 'test');
+    assert.equal(wrapper._privateKey, privateKey);
   });
 
   it('it can set APP_ID and WEBHOOK_SECRET via setters', async () => {
@@ -307,8 +293,8 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const payload = await createTestPayload({});
     await wrapper.create()(payload);
 
-    assert.ok(wrapper._appId, '1234');
-    assert.ok(wrapper._secret, WEBHOOK_SECRET);
+    assert.equal(wrapper._appId, '1234');
+    assert.equal(wrapper._secret, WEBHOOK_SECRET);
   });
 
   it('error during init probot sends 500', async () => {
