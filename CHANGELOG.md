@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.1...v3.0.2) (2019-04-23)
+
+
+### Bug Fixes
+
+* **package:** update probot to version 9.2.7 ([5755cd4](https://github.com/adobe/probot-serverless-openwhisk/commit/5755cd4))
+
 ## [3.0.1](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.0...v3.0.1) (2019-04-19)
 
 
