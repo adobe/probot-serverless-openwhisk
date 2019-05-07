@@ -1,3 +1,11 @@
+## [3.0.4](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.3...v3.0.4) (2019-05-07)
+
+
+### Bug Fixes
+
+* **package:** update dotenv to version 8.0.0 ([fa30761](https://github.com/adobe/probot-serverless-openwhisk/commit/fa30761))
+* **package:** update probot to version 9.2.9 ([2f5fb0a](https://github.com/adobe/probot-serverless-openwhisk/commit/2f5fb0a))
+
 ## [3.0.3](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.2...v3.0.3) (2019-04-25)
 
 
