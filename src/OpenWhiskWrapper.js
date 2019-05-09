@@ -176,9 +176,8 @@ module.exports = class OpenWhiskWrapper {
         delegateRequest = false;
       } else if (method === 'post' && headers) {
         // eslint-disable-next-line no-param-reassign
-        params.__ow_body = Buffer.from(body, 'base64').toString('utf8');
         if (headers['content-type'] === 'application/json') {
-          payload = JSON.parse(params.__ow_body);
+          payload = JSON.parse(Buffer.from(body, 'base64').toString('utf8'));
         }
         event = headers['x-github-event'];
         eventId = headers['x-github-delivery'];
