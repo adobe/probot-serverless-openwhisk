@@ -1,3 +1,11 @@
+## [3.0.5](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.4...v3.0.5) (2019-05-09)
+
+
+### Bug Fixes
+
+* **package:** update @adobe/openwhisk-action-builder to version 1.0.0 ([a75d2e8](https://github.com/adobe/probot-serverless-openwhisk/commit/a75d2e8)), closes [#72](https://github.com/adobe/probot-serverless-openwhisk/issues/72)
+* **wrapper:** adjust to new __ow_body behaviour of expressify ([9a36502](https://github.com/adobe/probot-serverless-openwhisk/commit/9a36502))
+
 ## [3.0.4](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.3...v3.0.4) (2019-05-07)
 
 
