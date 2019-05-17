@@ -32,7 +32,7 @@
     "fs-extra": "^8.0.0",
     "hbs": "^4.0.3",
     "openwhisk": "^3.17.0",
-    "probot": "9.2.9"
+    "probot": "9.2.11"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.2",
