@@ -153,7 +153,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
         'content-length': '148',
-        'content-security-policy': "default-src 'self'",
+        'content-security-policy': "default-src 'none'",
         'content-type': 'text/html; charset=utf-8',
         'x-content-type-options': 'nosniff',
         'x-powered-by': 'Express',
