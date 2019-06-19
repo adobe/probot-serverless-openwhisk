@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.8...v3.1.0) (2019-06-19)
+
+
+### Features
+
+* **development:** Add simple way to run development server. ([7a684d0](https://github.com/adobe/probot-serverless-openwhisk/commit/7a684d0)), closes [#51](https://github.com/adobe/probot-serverless-openwhisk/issues/51)
+
 ## [3.0.8](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.7...v3.0.8) (2019-05-24)
 
 
