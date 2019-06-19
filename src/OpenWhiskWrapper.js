@@ -105,6 +105,19 @@ module.exports = class OpenWhiskWrapper {
     return this;
   }
 
+  /**
+   * Creates a probot server that is suitable for local development.
+   * @param params - the 'action' params.
+   * @returns {Probot} the probot (server).
+   */
+  async createProbotServer(params) {
+    // add the fields that are usually set during run()
+    this._appId = params.GH_APP_ID;
+    this._secret = params.GH_APP_WEBHOOK_SECRET;
+    this._privateKey = params.GH_APP_PRIVATE_KEY;
+    return this.initProbot(params);
+  }
+
   async initProbot(params) {
     const options = {
       id: this._appId,
