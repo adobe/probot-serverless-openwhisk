@@ -28,13 +28,17 @@ probot app into an OpenWhisk action.
     const { OpenWhiskWrapper, ViewsHelper } = require('@adobe/probot-serverless-openwhisk');
     const app = require('./src/probot_app.js');
     
-    module.exports.main = new OpenWhiskWrapper()
+    const wrapper = new OpenWhiskWrapper()
       .withViewsDirectory('./src/views')
       .withApp(app)
       .withApp(new ViewsHelper()
         .withView('/docs', 'docs.hbs')
-        .register())
-      .create();
+        .register());
+
+    module.exports = {
+      main: wrapper.create(),
+      wrapper,
+    };
     ```
 
 4. Build the OpenWhisk action
@@ -212,6 +216,25 @@ wskbot -s logo.png
 Instead of having very a long argument list, the parameters described above can also be specified in
 the `package.json`. see the [action-builder documentation](https://github.com/adobe/openwhisk-action-builder#specifying-arguments-in-the-packagejson)
 for more details. 
+
+## Enabling local development
+
+In your github app project, create a `dev.js` with:
+
+```js
+const { DevelopmentServer } = require('@adobe/probot-serverless-openwhisk');
+const { wrapper } = require('./index.js');
+
+async function run() {
+  const devServer = await new DevelopmentServer(wrapper).init();
+  return devServer.run();
+}
+
+run().then(process.stdout).catch(process.stderr);
+```
+
+and then run `node dev.js`. this starts a probot server which an optional smee.io client.
+you can add the smee url via a `WEBHOOK_PROXY_URL` entry in the `.env` file.
 
 ## Notes
 

@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 const OpenWhiskWrapper = require('./src/OpenWhiskWrapper.js');
+const DevelopmentServer = require('./src/DevelopmentServer.js');
 const ViewsHelper = require('./src/apps/ViewsHelper.js');
 
 module.exports = {
   OpenWhiskWrapper,
   ViewsHelper,
+  DevelopmentServer,
 };
