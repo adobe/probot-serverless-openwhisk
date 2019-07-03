@@ -19,7 +19,9 @@
     "commit": "git-cz",
     "test": "nyc --reporter=text --reporter=lcov mocha",
     "test-ci": "npm run lint && npm run test && codecov",
-    "lint": "./node_modules/.bin/eslint ."
+    "lint": "./node_modules/.bin/eslint .",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@adobe/openwhisk-action-builder": "^1.0.1",
@@ -33,7 +35,8 @@
     "hbs": "^4.0.3",
     "openwhisk": "^3.17.0",
     "probot": "9.2.15",
-    "smee-client": "^1.1.0"
+    "smee-client": "^1.1.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.2",
@@ -70,5 +73,6 @@
     "ghooks": {
       "pre-commit": "npx lint-staged"
     }
-  }
+  },
+  "snyk": true
 }
