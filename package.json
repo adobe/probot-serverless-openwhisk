@@ -1,6 +1,6 @@
 {
   "name": "@adobe/probot-serverless-openwhisk",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Probot Serverless OpenWisk",
   "license": "Apache-2.0",
   "repository": "https://github.com/adobe/probot-serverless-openwhisk",

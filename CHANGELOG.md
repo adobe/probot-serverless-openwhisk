@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.1.0...v3.1.1) (2019-07-12)
+
+
+### Bug Fixes
+
+* **package:** update dependencies ([5430d73](https://github.com/adobe/probot-serverless-openwhisk/commit/5430d73))
+
 # [3.1.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.0.8...v3.1.0) (2019-06-19)
 
 
