@@ -1,3 +1,10 @@
+## [3.1.5](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.1.4...v3.1.5) (2019-07-24)
+
+
+### Bug Fixes
+
+* **index:** remove development server from index due to webpack problems ([#94](https://github.com/adobe/probot-serverless-openwhisk/issues/94)) ([f0dd76e](https://github.com/adobe/probot-serverless-openwhisk/commit/f0dd76e))
+
 ## [3.1.4](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.1.3...v3.1.4) (2019-07-24)
 
 
