@@ -1,3 +1,10 @@
+## [3.1.6](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.1.5...v3.1.6) (2019-07-24)
+
+
+### Bug Fixes
+
+* **package:** update to @adobe/openwhisk-action-builder@1.2.1 ([62efa4c](https://github.com/adobe/probot-serverless-openwhisk/commit/62efa4c))
+
 ## [3.1.5](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.1.4...v3.1.5) (2019-07-24)
 
 
