@@ -15,7 +15,6 @@ const OWActionBuilder = require('@adobe/openwhisk-action-builder').ActionBuilder
 const chalk = require('chalk');
 const { findPrivateKey } = require('probot/lib/private-key');
 const dotenv = require('dotenv');
-const pkgConfig = require('./packager-config.js');
 const { version } = require('../../package.json');
 
 const GITHUB_PRIVATE_KEY_FILE = 'github-private-key.pem';
@@ -41,9 +40,6 @@ module.exports = class ActionBuilder extends OWActionBuilder {
       this.log.warn(chalk`{yellow warn:} No Github-App private key set and none can be found in your directory.
       If this is intended, make sure the key is available to the action via {grey GH_APP_PRIVATE_KEY} parameter.`);
     }
-
-    this._externals = pkgConfig.externals;
-    this._kind = 'nodejs:10';
   }
 
   async updateArchive(archive, packageJson) {
