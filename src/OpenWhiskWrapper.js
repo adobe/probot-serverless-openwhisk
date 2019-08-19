@@ -17,10 +17,9 @@ const path = require('path');
 const fse = require('fs-extra');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
-const logWrapper = require('@adobe/openwhisk-action-builder/src/logging').logger;
+const { logger: logWrapper, expressify } = require('@adobe/openwhisk-action-utils');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
-const expressify = require('@adobe/openwhisk-action-builder/src/expressify');
 const hbs = require('hbs');
 
 const ERROR = {
