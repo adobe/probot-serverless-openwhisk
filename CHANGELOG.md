@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.1.6...v4.0.0) (2019-08-19)
+
+
+### Features
+
+* **dev:** extract dev/build tools to own package ([846a104](https://github.com/adobe/probot-serverless-openwhisk/commit/846a104))
+
+
+### BREAKING CHANGES
+
+* **dev:** wskbot and dev server moved to @adobe/openwhisk-probot-builder
+
 ## [3.1.6](https://github.com/adobe/probot-serverless-openwhisk/compare/v3.1.5...v3.1.6) (2019-07-24)
 
 
