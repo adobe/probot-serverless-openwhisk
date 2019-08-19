@@ -17,10 +17,11 @@ probot app into an OpenWhisk action.
 
 1. Create a [Probot](https://probot.github.io) app following GitHub's instructions
 
-2. Add this wrapper as dev dependency:
+2. Add this wrapper as dependency:
     ```sh
     # Add OpenWhisk wrapper as dependency 
     npm add probot-serverless-openwhisk
+    npm add --save-dev openwhisk-probot-builder
     ```
 
 3. Add an `index.js`:
