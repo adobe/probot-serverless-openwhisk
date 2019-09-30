@@ -17,7 +17,8 @@ const path = require('path');
 const fse = require('fs-extra');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
-const { logger: logWrapper, expressify } = require('@adobe/openwhisk-action-utils');
+const { logger: utilsLogger, expressify } = require('@adobe/openwhisk-action-utils');
+const { rootLogger } = require('@adobe/helix-log');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
 const hbs = require('hbs');
@@ -238,21 +239,12 @@ module.exports = class OpenWhiskWrapper {
     };
 
     return async (params) => {
-      // setup logger if configured
-      logWrapper.init(logger, params);
-
-      // eslint-disable-next-line no-underscore-dangle
-      logger.debug('>> %s %s"\n', (params.__ow_method || 'get').toUpperCase(), params.__ow_path || '/', params.__ow_headers);
-
-      // run actual action
-      const result = await run(params);
-
-      // if remote loggers are configured, wait a little to ensure logs buffers are flushed
-      if (logger.flush) {
-        logger.flush(); // don't wait for flush.
-      }
-
-      return result;
+      // make sure that the helix-logger doesn't also write to console
+      rootLogger.loggers.delete('default');
+      return utilsLogger.wrap(run, {
+        __ow_logger: logger,
+        ...params,
+      });
     };
   }
 };
