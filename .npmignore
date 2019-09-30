@@ -1,11 +1,7 @@
 node_modules
 npm-debug.log
-*.pem
-.env
-.nyc_output/
+test
 coverage.lcov
 coverage
 test-results.xml
-.circleci
-.github
-.idea
+.*
