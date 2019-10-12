@@ -79,7 +79,7 @@ The deploy parameters can be specified in the CLI via `-p`. See below.
 
 ## CLI
 
-The command line interface `wskbot` can be invoked via `./node_modules/.bin/wskbot`. 
+The command-line interface `wskbot` can be invoked via `./node_modules/.bin/wskbot`. 
 Alternatively, you can also use npx: `npx wskbot` or install it globally `npm install -g probot-serverless-openwhisk`.
 
 ```
@@ -135,14 +135,14 @@ ok: created action: dist/probot-openwhisk-example.zip.
 Deploy to openwhisk the following command or specify --deploy on the commandline:
 $ wsk action update probot-openwhisk-example --kind nodejs:10 --web raw dist/probot-openwhisk-example.zip
 
-Githup App Settings:
+GitHub App Settings:
 Homepage URL: https://adobeioruntime.net/api/v1/web/tripod/default/probot-openwhisk-example/probot
  Webhook URL: https://adobeioruntime.net/api/v1/web/tripod/default/probot-openwhisk-example
 ```
 
 ### Automatically deploy to openwhisk
 
-When passing the `--deploy` argument, the `wskbot` will try to deploy it ot OpenWhisk using the settings from
+When passing the `--deploy` argument, the `wskbot` will try to deploy it to OpenWhisk using the settings from
 `~/.wskprops`. Alternatively, you can also set the `WSK_NAMESPACE`, `WSK_AUTH`, `WSK_APIHOST` variables in your
 environment or `.env` file.
 
@@ -154,7 +154,7 @@ ok: updated action tripod/probot-openwhisk-example
 
 ### Automatically _test_ the deployed action
 
-In order to quickly test the deployed action, `wskbot` can send a `GET` request to the action url.
+To quickly test the deployed action, `wskbot` can send a `GET` request to the action url.
 
 ```
 $ wskbot --deploy --no-hints --test
@@ -241,7 +241,7 @@ you can add the smee url via a `WEBHOOK_PROXY_URL` entry in the `.env` file.
 
 ### Bundling
 
-The action is created using webpack to create bundle for the sources and then creates a zip archive
+The action is created using webpack to create a bundle for the sources and then creates a zip archive
 with the bundle, a `package.json`, the private key files and the `.env`.
 
 ## Contributing
