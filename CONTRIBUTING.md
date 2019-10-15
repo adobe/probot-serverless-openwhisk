@@ -8,7 +8,7 @@ This project adheres to the Adobe [code of conduct](CODE_OF_CONDUCT.md). By part
 
 ## Contributor License Agreement
 
-All third-party contributions to this project must be accompanied by a signed contributor license. This gives Adobe permission to redistribute your contributions as part of the project. [Sign our CLA](http://opensource.adobe.com/cla.html)! You only need to submit an Adobe CLA one time, so if you have submitted one previously, you are good to go!
+All third-party contributions to this project must be accompanied by a signed contributor license. This permits Adobe to redistribute your contributions as part of the project. [Sign our CLA](http://opensource.adobe.com/cla.html)! You only need to submit an Adobe CLA one time, so if you have submitted one previously, you are good to go!
 
 ## Things to Keep in Mind
 
@@ -19,7 +19,7 @@ For other contributors, a maintainer of the project has to approve the pull requ
 # Before You Contribute
 
 * Check that there is an existing issue in GitHub issues
-* Check if there are other pull requests that might overlap or conflict with your intended contribution
+* Check if other pull requests might overlap or conflict with your intended contribution
 
 # How to Contribute
 
@@ -31,7 +31,7 @@ In your pull request, outline:
 
 * What the changes intend
 * How they change the existing code
-* If (and what) they breaks
+* If (and what) they break
 * Start the pull request with the GitHub issue ID, e.g. #123
 
 Lastly, please follow the [pull request template](.github/pull_request_template.md) when submitting a pull request!
@@ -45,7 +45,7 @@ Each commit message that is not part of a pull request:
 
 ## Coding Styleguides
 
-We enforce a coding styleguide using `eslint`. As part of your build, run `npm run lint` to check if your code is conforming to the style guide. We do the same for every PR in our CI, so PRs will get rejected if they don't follow the style guide.
+We enforce a coding style guide using `eslint`. As part of your build, run `npm run lint` to check if your code is conforming to the style guide. We do the same for every PR in our CI, so PRs will get rejected if they don't follow the style guide.
 
 You can fix some of the issues automatically by running `npx eslint . --fix`.
 
