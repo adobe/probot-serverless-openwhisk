@@ -5,6 +5,24 @@ Running a Probot app in OpenWhisk might be a bit challenging as the action invoc
 be translated into a probot event. This package offers an easy wrapper to turn an existing
 probot app into an OpenWhisk action.
 
+Table of Contents
+=================
+
+   * [Serverless Probot on Openwhisk](#serverless-probot-on-openwhisk)
+      * [Status](#status)
+      * [Setup](#setup)
+      * [Passing the OpenWhisk action params into the handler](#passing-the-openwhisk-action-params-into-the-handler)
+      * [CLI](#cli)
+         * [Automatically deploy to openwhisk](#automatically-deploy-to-openwhisk)
+         * [Automatically <em>test</em> the deployed action](#automatically-test-the-deployed-action)
+         * [Including action parameters](#including-action-parameters)
+         * [Including static files](#including-static-files)
+         * [Specifying the arguments in the package.json](#specifying-the-arguments-in-the-packagejson)
+      * [Enabling local development](#enabling-local-development)
+      * [Notes](#notes)
+         * [Bundling](#bundling)
+      * [Contributing](#contributing)
+      
 ## Status
 [![GitHub license](https://img.shields.io/github/license/adobe/probot-serverless-openwhisk.svg)](https://github.com/adobe/probot-serverless-openwhisk/blob/master/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/probot-serverless-openwhisk.svg)](https://github.com/adobe/probot-serverless-openwhisk/issues)
