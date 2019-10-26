@@ -29,7 +29,7 @@
     "@semantic-release/changelog": "3.0.4",
     "@semantic-release/git": "7.0.16",
     "@semantic-release/github": "5.5.4",
-    "@semantic-release/npm": "5.2.0",
+    "@semantic-release/npm": "5.3.1",
     "ajv": "6.10.2",
     "codecov": "3.6.1",
     "eslint": "6.5.1",
