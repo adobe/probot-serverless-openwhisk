@@ -17,7 +17,8 @@ const path = require('path');
 const fse = require('fs-extra');
 const { createProbot } = require('probot');
 const { logger } = require('probot/lib/logger');
-const { logger: utilsLogger, expressify } = require('@adobe/openwhisk-action-utils');
+const { expressify, createBunyanLogger } = require('@adobe/openwhisk-action-utils');
+const { logger: utilsLogger } = require('@adobe/openwhisk-action-logger');
 const { rootLogger } = require('@adobe/helix-log');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
@@ -241,7 +242,11 @@ module.exports = class OpenWhiskWrapper {
     return async (params) => {
       // make sure that the helix-logger doesn't also write to console
       rootLogger.loggers.delete('default');
-      return utilsLogger.wrap(run, {
+
+      // create a bunyan stream and attach it to the one from probot
+      logger.addStream(createBunyanLogger().streams[0]);
+
+      return utilsLogger(run)({
         __ow_logger: logger,
         ...params,
       });
