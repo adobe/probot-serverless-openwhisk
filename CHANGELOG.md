@@ -1,3 +1,10 @@
+## [4.0.13](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.12...v4.0.13) (2020-01-09)
+
+
+### Bug Fixes
+
+* **deps:** update [@adobe](https://github.com/adobe) ([8a15c92](https://github.com/adobe/probot-serverless-openwhisk/commit/8a15c9250cc2d2350ca26fe3e2ce0502b2724806))
+
 ## [4.0.12](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.11...v4.0.12) (2019-12-18)
 
 
