@@ -20,7 +20,7 @@
   "dependencies": {
     "@adobe/helix-log": "4.5.0",
     "@adobe/openwhisk-action-utils": "4.1.0",
-    "@adobe/openwhisk-action-logger": "2.0.4",
+    "@adobe/openwhisk-action-logger": "2.1.0",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
     "hbs": "^4.0.5",
