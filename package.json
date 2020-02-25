@@ -29,7 +29,7 @@
   "devDependencies": {
     "@semantic-release/changelog": "5.0.0",
     "@semantic-release/git": "9.0.0",
-    "ajv": "6.11.0",
+    "ajv": "6.12.0",
     "codecov": "3.6.5",
     "eslint": "6.8.0",
     "eslint-config-airbnb-base": "14.0.0",
@@ -39,7 +39,7 @@
     "lint-staged": "10.0.7",
     "mocha": "7.0.1",
     "nyc": "15.0.0",
-    "semantic-release": "17.0.3"
+    "semantic-release": "17.0.4"
   },
   "engines": {
     "node": ">= 8.3.0"
