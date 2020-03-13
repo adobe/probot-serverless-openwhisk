@@ -16,10 +16,8 @@ const crypto = require('crypto');
 const path = require('path');
 const fse = require('fs-extra');
 const { createProbot } = require('probot');
-const { logger } = require('probot/lib/logger');
-const { expressify, createBunyanLogger } = require('@adobe/openwhisk-action-utils');
-const { logger: utilsLogger } = require('@adobe/openwhisk-action-logger');
-const { rootLogger } = require('@adobe/helix-log');
+const { expressify, createBunyanLogger, wrap } = require('@adobe/openwhisk-action-utils');
+const { logger } = require('@adobe/openwhisk-action-logger');
 const { resolve } = require('probot/lib/resolver');
 const { findPrivateKey } = require('probot/lib/private-key');
 const hbs = require('hbs');
@@ -31,6 +29,8 @@ const ERROR = {
   },
   body: 'Internal Server Error.',
 };
+
+const HELIX_LOG_BUNYAN_STREAM = createBunyanLogger().streams[0];
 
 /**
  * Validate if the payload is valid.
@@ -129,6 +129,13 @@ module.exports = class OpenWhiskWrapper {
       webhookPath: this._webhookPath,
     };
     const probot = createProbot(options);
+
+    // adjust probot logger to use helix-log if needed
+    if (probot.logger.streams[0] !== HELIX_LOG_BUNYAN_STREAM) {
+      probot.logger.streams.splice(0, 1);
+      probot.logger.addStream(HELIX_LOG_BUNYAN_STREAM);
+    }
+
     if (this._viewsDirectory.length === 0) {
       this.withViewsDirectory('./views');
     }
@@ -159,6 +166,7 @@ module.exports = class OpenWhiskWrapper {
         __ow_method: method,
         __ow_headers: headers,
         __ow_body: body,
+        __ow_logger: log,
       } = params;
 
       // set APP_ID, WEBHOOK_SECRET and PRIVATE_KEY if defined via params
@@ -183,10 +191,10 @@ module.exports = class OpenWhiskWrapper {
           validatePayload(this._secret, payload, signature);
           payload = JSON.parse(payload);
         } catch (e) {
-          logger.error(`Error validating payload: ${e.message}`);
+          log.error(`Error validating payload: ${e.message}`);
           return ERROR;
         }
-        logger.debug('payload signature valid.');
+        log.debug('payload signature valid.');
         delegateRequest = false;
       } else if (method === 'post' && headers) {
         // eslint-disable-next-line no-param-reassign
@@ -198,15 +206,15 @@ module.exports = class OpenWhiskWrapper {
       }
 
       if (eventId && payload && payload.action) {
-        logger.info(`Received event ${eventId} ${event}${payload.action ? (`.${payload.action}`) : ''}`);
+        log.info(`Received event ${eventId} ${event}${payload.action ? (`.${payload.action}`) : ''}`);
       }
 
       let probot;
       try {
-        logger.debug('intializing probot...');
+        log.debug('intializing probot...');
         probot = await this.initProbot(params);
       } catch (e) {
-        logger.error(`Error while loading probot: ${e.stack || e}`);
+        log.error(`Error while loading probot: ${e.stack || e}`);
         return ERROR;
       }
 
@@ -234,22 +242,11 @@ module.exports = class OpenWhiskWrapper {
 
         return result;
       } catch (err) {
-        logger.error(err);
+        log.error(err);
         return ERROR;
       }
     };
 
-    return async (params) => {
-      // make sure that the helix-logger doesn't also write to console
-      rootLogger.loggers.delete('default');
-
-      // create a bunyan stream and attach it to the one from probot
-      logger.addStream(createBunyanLogger().streams[0]);
-
-      return utilsLogger(run)({
-        __ow_logger: logger,
-        ...params,
-      });
-    };
+    return wrap(run).with(logger);
   }
 };
