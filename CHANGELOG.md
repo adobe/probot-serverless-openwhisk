@@ -1,3 +1,10 @@
+## [4.0.25](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.24...v4.0.25) (2020-03-14)
+
+
+### Bug Fixes
+
+* **server:** ensure that logging is initialized properly ([#170](https://github.com/adobe/probot-serverless-openwhisk/issues/170)) ([be7aa58](https://github.com/adobe/probot-serverless-openwhisk/commit/be7aa5865e28d9dbffd20fa94e147575b1866b8a))
+
 ## [4.0.24](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.23...v4.0.24) (2020-03-13)
 
 
