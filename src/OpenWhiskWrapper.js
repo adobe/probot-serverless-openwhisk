@@ -116,6 +116,7 @@ module.exports = class OpenWhiskWrapper {
     this._appId = params.GH_APP_ID;
     this._secret = params.GH_APP_WEBHOOK_SECRET;
     this._privateKey = params.GH_APP_PRIVATE_KEY;
+    await logger.init(params);
     return this.initProbot(params);
   }
 
