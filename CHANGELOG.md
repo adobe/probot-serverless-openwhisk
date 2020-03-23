@@ -1,3 +1,10 @@
+## [4.0.26](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.25...v4.0.26) (2020-03-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v9 ([#175](https://github.com/adobe/probot-serverless-openwhisk/issues/175)) ([3c2bb22](https://github.com/adobe/probot-serverless-openwhisk/commit/3c2bb22c44eaec261d93aebd6f25590336cfe79d))
+
 ## [4.0.25](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.24...v4.0.25) (2020-03-14)
 
 
