@@ -28,7 +28,7 @@ Table of Contents
 [![GitHub issues](https://img.shields.io/github/issues/adobe/probot-serverless-openwhisk.svg)](https://github.com/adobe/probot-serverless-openwhisk/issues)
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/probot-serverless-openwhisk.svg)](https://circleci.com/gh/adobe/probot-serverless-openwhisk)
 [![codecov](https://img.shields.io/codecov/c/github/adobe/probot-serverless-openwhisk.svg)](https://codecov.io/gh/adobe/probot-serverless-openwhisk)
-[![Greenkeeper badge](https://badges.greenkeeper.io/adobe/probot-serverless-openwhisk.svg)](https://greenkeeper.io/)
+
 [![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/probot-serverless-openwhisk.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/probot-serverless-openwhisk)
 
 ## Setup
