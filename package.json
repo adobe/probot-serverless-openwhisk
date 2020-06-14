@@ -41,7 +41,7 @@
     "eslint-plugin-import": "2.20.2",
     "ghooks": "2.0.4",
     "lint-staged": "10.2.9",
-    "mocha": "7.2.0",
+    "mocha": "8.0.1",
     "nyc": "15.1.0",
     "semantic-release": "17.0.8",
     "smee-client": "1.1.0"
