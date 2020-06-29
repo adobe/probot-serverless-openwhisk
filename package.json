@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@adobe/openwhisk-action-logger": "2.2.0",
-    "@adobe/openwhisk-action-utils": "4.2.2",
+    "@adobe/openwhisk-action-utils": "4.2.3",
     "express": "4.17.1",
     "fs-extra": "9.0.1",
     "hbs": "4.1.1",
