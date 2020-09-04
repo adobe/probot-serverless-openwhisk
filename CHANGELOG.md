@@ -1,3 +1,10 @@
+## [4.0.30](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.29...v4.0.30) (2020-09-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/openwhisk-action-utils to v4.3.0 ([#203](https://github.com/adobe/probot-serverless-openwhisk/issues/203)) ([35324f1](https://github.com/adobe/probot-serverless-openwhisk/commit/35324f199007eff9833b272a46d2157e074b811a))
+
 ## [4.0.29](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.28...v4.0.29) (2020-08-24)
 
 
