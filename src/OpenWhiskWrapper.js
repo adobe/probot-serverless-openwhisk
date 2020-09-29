@@ -15,12 +15,14 @@
 const crypto = require('crypto');
 const path = require('path');
 const fse = require('fs-extra');
-const { createProbot } = require('probot');
-const { expressify, createBunyanLogger, wrap } = require('@adobe/openwhisk-action-utils');
+const { Probot } = require('probot');
+const pino = require('pino');
+const { expressify, wrap } = require('@adobe/openwhisk-action-utils');
 const { logger } = require('@adobe/openwhisk-action-logger');
-const { resolve } = require('probot/lib/resolver');
-const { findPrivateKey } = require('probot/lib/private-key');
+const { resolveAppFunction } = require('probot/lib/helpers/resolve-app-function');
+const { findPrivateKey } = require('probot/lib/helpers/get-private-key');
 const hbs = require('hbs');
+const PinoInterface = require('./pino-interface.js');
 
 const ERROR = {
   statusCode: 500,
@@ -29,8 +31,6 @@ const ERROR = {
   },
   body: 'Internal Server Error.',
 };
-
-const HELIX_LOG_BUNYAN_STREAM = createBunyanLogger().streams[0];
 
 /**
  * Validate if the payload is valid.
@@ -69,7 +69,7 @@ module.exports = class OpenWhiskWrapper {
 
   withApp(app) {
     if (typeof app === 'string') {
-      this._apps.push(resolve(app));
+      this._apps.push(resolveAppFunction(app));
     } else {
       this._apps.push(app);
     }
@@ -124,24 +124,29 @@ module.exports = class OpenWhiskWrapper {
     const options = {
       id: this._appId,
       secret: this._secret,
-      cert: this._privateKey,
+      privateKey: this._privateKey,
       catchErrors: false,
       githubToken: this._githubToken,
       webhookPath: this._webhookPath,
     };
-    const probot = createProbot(options);
 
-    // adjust probot logger to use helix-log if needed
-    if (probot.logger.streams[0] !== HELIX_LOG_BUNYAN_STREAM) {
-      probot.logger.streams.splice(0, 1);
-      probot.logger.addStream(HELIX_LOG_BUNYAN_STREAM);
-    }
+    options.log = pino({
+      level: process.env.LOG_LEVEL || 'info',
+      name: 'probot',
+      serializers: {
+        err: pino.stdSerializers.err,
+        req: pino.stdSerializers.req,
+        res: PinoInterface.resSerializer,
+      },
+    }, new PinoInterface());
+
+    const probot = new Probot(options);
 
     if (this._viewsDirectory.length === 0) {
       this.withViewsDirectory('./views');
     }
     probot.server.set('views', this._viewsDirectory);
-    probot.logger.debug('Set view directory to %s', probot.server.get('views'));
+    probot.log.debug('Set view directory to %s', probot.server.get('views'));
     const hbsEngine = hbs.create();
     hbsEngine.localsAsTemplateData(probot.server);
     probot.server.engine('hbs', hbsEngine.__express);
@@ -149,7 +154,7 @@ module.exports = class OpenWhiskWrapper {
     try {
       probot.server.locals.pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
     } catch (e) {
-      probot.logger.info('unable to load package.json %s', e);
+      probot.log.info('unable to load package.json %s', e);
     }
 
     probot.load((app) => {
