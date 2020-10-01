@@ -100,7 +100,6 @@ describe('OpenWhisk Wrapper - Handler', () => {
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
         'x-powered-by': 'Express',
-        'x-request-id': '1234',
       },
     });
   });
@@ -127,7 +126,6 @@ describe('OpenWhisk Wrapper - Handler', () => {
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
         'x-powered-by': 'Express',
-        'x-request-id': '1234',
       },
     });
   });
@@ -157,7 +155,6 @@ describe('OpenWhisk Wrapper - Handler', () => {
         'content-type': 'text/html; charset=utf-8',
         'x-content-type-options': 'nosniff',
         'x-powered-by': 'Express',
-        'x-request-id': '1234',
       },
       statusCode: 404,
     });
@@ -201,13 +198,13 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const result = await main(await createTestPayload());
 
     assert.ok(!testHandler.invoked);
+    assert.ok(result.body.indexOf('Error: signature does not match event payload and secret') >= 0);
     delete result.headers.date;
+    delete result.body;
     assert.deepEqual(result, {
-      body: 'Error: signature does not match event payload and secret',
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
         'x-powered-by': 'Express',
-        'x-request-id': '1234',
       },
       statusCode: 400,
     });
@@ -238,7 +235,6 @@ describe('OpenWhisk Wrapper - Handler', () => {
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
         'x-powered-by': 'Express',
-        'x-request-id': '1234',
       },
     });
   });
@@ -262,7 +258,6 @@ describe('OpenWhisk Wrapper - Handler', () => {
       headers: {
         'cache-control': 'no-store, private, must-revalidate',
         'x-powered-by': 'Express',
-        'x-request-id': '1234',
       },
     });
   });
@@ -327,7 +322,6 @@ describe('OpenWhisk Wrapper - Handler', () => {
     });
 
     delete result.headers.date;
-    delete result.headers['x-request-id'];
     assert.deepEqual(result, {
       body: 'PONG',
       headers: {
