@@ -1,3 +1,10 @@
+## [4.0.33](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.32...v4.0.33) (2020-10-05)
+
+
+### Bug Fixes
+
+* **deps:** update dependency probot to v10.9.1 ([#211](https://github.com/adobe/probot-serverless-openwhisk/issues/211)) ([84f7f32](https://github.com/adobe/probot-serverless-openwhisk/commit/84f7f32c6cb5eadbe7fc2a7515e78185b45cb970))
+
 ## [4.0.32](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.31...v4.0.32) (2020-10-01)
 
 
