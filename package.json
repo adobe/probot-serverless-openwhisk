@@ -30,14 +30,14 @@
     "fs-extra": "9.0.1",
     "hbs": "4.1.1",
     "pino": "6.7.0",
-    "probot": "10.9.3"
+    "probot": "10.9.4"
   },
   "devDependencies": {
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "ajv": "6.12.6",
     "codecov": "3.8.0",
-    "eslint": "7.11.0",
+    "eslint": "7.12.0",
     "eslint-config-airbnb-base": "14.2.0",
     "eslint-plugin-header": "3.1.0",
     "eslint-plugin-import": "2.22.1",
