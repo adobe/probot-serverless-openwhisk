@@ -24,7 +24,7 @@ Table of Contents
       * [Contributing](#contributing)
       
 ## Status
-[![GitHub license](https://img.shields.io/github/license/adobe/probot-serverless-openwhisk.svg)](https://github.com/adobe/probot-serverless-openwhisk/blob/master/LICENSE.txt)
+[![GitHub license](https://img.shields.io/github/license/adobe/probot-serverless-openwhisk.svg)](https://github.com/adobe/probot-serverless-openwhisk/blob/main/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/probot-serverless-openwhisk.svg)](https://github.com/adobe/probot-serverless-openwhisk/issues)
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/probot-serverless-openwhisk.svg)](https://circleci.com/gh/adobe/probot-serverless-openwhisk)
 [![codecov](https://img.shields.io/codecov/c/github/adobe/probot-serverless-openwhisk.svg)](https://codecov.io/gh/adobe/probot-serverless-openwhisk)
