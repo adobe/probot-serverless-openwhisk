@@ -39,7 +39,7 @@ class ViewsHelper {
   }
 
   init(app) {
-    const router = app.route();
+    const router = app.getRouter();
     Object.keys(this._views).forEach((route) => {
       const view = this._views[route];
       app.log.debug('register view: %s -> %s', route, view);
