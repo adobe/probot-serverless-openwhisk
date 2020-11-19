@@ -69,12 +69,18 @@ class PinoInterface extends InterfaceBase {
     });
 
     const time = this.lastTime;
+    let timestamp;
+    try {
+      timestamp = new Date(Number(time));
+    } catch (e) {
+      timestamp = new Date();
+    }
     const level = pino2hlxLevel(this.lastLevel);
     this._logImpl({
       ...fields,
       message: [msg],
       level,
-      timestamp: new Date(time),
+      timestamp,
     });
   }
 }

@@ -29,7 +29,7 @@ class TestHandler {
     return this.handle.bind(this);
   }
 
-  handle(app, actionParams = {}) {
+  handle({ app }, actionParams = {}) {
     this.testParam = actionParams.TEST_PARAM || '';
     app.on('issues.opened', async () => {
       this.invoked = true;
