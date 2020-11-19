@@ -1,3 +1,10 @@
+## [4.0.38](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.37...v4.0.38) (2020-11-19)
+
+
+### Bug Fixes
+
+* **logging:** generate correct timestamp ([#223](https://github.com/adobe/probot-serverless-openwhisk/issues/223)) ([4a12319](https://github.com/adobe/probot-serverless-openwhisk/commit/4a12319dd6774ce1c83e1b88d4138c8fe4eeabbd))
+
 ## [4.0.37](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.36...v4.0.37) (2020-11-18)
 
 
