@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-module.exports = (app, actionParams = {}) => {
+module.exports = ({ app }, actionParams = {}) => {
   const ctx = actionParams.testContext;
 
   app.on('issues.opened', async () => {
