@@ -19,8 +19,8 @@ const { Probot } = require('probot');
 const pino = require('pino');
 const { expressify, wrap } = require('@adobe/openwhisk-action-utils');
 const { logger } = require('@adobe/openwhisk-action-logger');
+const { getPrivateKey } = require('@probot/get-private-key');
 const { resolveAppFunction } = require('probot/lib/helpers/resolve-app-function');
-const { findPrivateKey } = require('probot/lib/helpers/get-private-key');
 const hbs = require('hbs');
 const PinoInterface = require('./pino-interface.js');
 
@@ -183,7 +183,7 @@ module.exports = class OpenWhiskWrapper {
         this._secret = params.GH_APP_WEBHOOK_SECRET;
       }
       if (!this._privateKey) {
-        this._privateKey = params.GH_APP_PRIVATE_KEY || findPrivateKey();
+        this._privateKey = params.GH_APP_PRIVATE_KEY || getPrivateKey();
       }
 
       // check if the event is triggered via params.
