@@ -185,7 +185,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     });
   });
 
-  it('does not invoke the handler and responds with 500 for wrong signature', async () => {
+  it('does not invoke the handler and responds with 400 for wrong signature', async () => {
     const testHandler = new TestHandler();
 
     const main = new OpenWhiskWrapper()
@@ -198,7 +198,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
     const result = await main(await createTestPayload());
 
     assert.ok(!testHandler.invoked);
-    assert.ok(result.body.indexOf('Error: signature does not match event payload and secret') >= 0);
+    assert.ok(result.body.indexOf('signature does not match event payload and secret') >= 0);
     delete result.headers.date;
     delete result.body;
     assert.deepEqual(result, {
