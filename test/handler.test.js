@@ -295,7 +295,7 @@ describe('OpenWhisk Wrapper - Handler', () => {
   it('error during init probot sends 500', async () => {
     const wrapper = new OpenWhiskWrapper()
       .withWebhookSecret(WEBHOOK_SECRET);
-    wrapper._apps = null;
+    wrapper._viewsDirectory = null;
     const payload = await createTestPayload({});
     const result = await wrapper.create()(payload);
     assert.equal(result.statusCode, 500);
