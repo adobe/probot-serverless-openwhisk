@@ -30,7 +30,7 @@
     "express": "4.17.1",
     "fs-extra": "9.0.1",
     "hbs": "4.1.1",
-    "pino": "6.9.0",
+    "pino": "6.10.0",
     "probot": "10.19.0"
   },
   "devDependencies": {
