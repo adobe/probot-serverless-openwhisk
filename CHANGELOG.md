@@ -1,3 +1,10 @@
+## [4.0.43](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.42...v4.0.43) (2021-01-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency pino to v6.10.0 ([#234](https://github.com/adobe/probot-serverless-openwhisk/issues/234)) ([4aca2d7](https://github.com/adobe/probot-serverless-openwhisk/commit/4aca2d73a4f36b432db6dcf7e6f787b397d5ce6c))
+
 ## [4.0.42](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.41...v4.0.42) (2020-12-21)
 
 
