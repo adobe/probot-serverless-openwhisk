@@ -1,3 +1,10 @@
+## [4.0.44](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.43...v4.0.44) (2021-01-25)
+
+
+### Bug Fixes
+
+* **deps:** update external ([#237](https://github.com/adobe/probot-serverless-openwhisk/issues/237)) ([3e14cbd](https://github.com/adobe/probot-serverless-openwhisk/commit/3e14cbdf63ebee1d039a074cf4221bffa278c7e5))
+
 ## [4.0.43](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.42...v4.0.43) (2021-01-11)
 
 
