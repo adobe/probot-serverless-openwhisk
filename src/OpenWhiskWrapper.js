@@ -15,7 +15,7 @@
 const crypto = require('crypto');
 const path = require('path');
 const fse = require('fs-extra');
-const { Probot } = require('probot');
+const { Probot, Server } = require('probot');
 const pino = require('pino');
 const { expressify, wrap } = require('@adobe/openwhisk-action-utils');
 const { logger } = require('@adobe/openwhisk-action-logger');
@@ -67,12 +67,17 @@ module.exports = class OpenWhiskWrapper {
     this._webhookPath = '/';
   }
 
+  async resolveApps() {
+    return Promise.all(this._apps.map(async (app, idx, apps) => {
+      if (typeof app === 'string') {
+        // eslint-disable-next-line no-param-reassign
+        apps[idx] = await resolveAppFunction(app);
+      }
+    }));
+  }
+
   withApp(app) {
-    if (typeof app === 'string') {
-      this._apps.push(resolveAppFunction(app));
-    } else {
-      this._apps.push(app);
-    }
+    this._apps.push(app);
     return this;
   }
 
@@ -121,16 +126,7 @@ module.exports = class OpenWhiskWrapper {
   }
 
   async initProbot(params) {
-    const options = {
-      id: this._appId,
-      secret: this._secret,
-      privateKey: this._privateKey,
-      catchErrors: false,
-      githubToken: this._githubToken,
-      webhookPath: this._webhookPath,
-    };
-
-    options.log = pino({
+    const log = pino({
       level: process.env.LOG_LEVEL || 'info',
       name: 'probot',
       serializers: {
@@ -140,30 +136,45 @@ module.exports = class OpenWhiskWrapper {
       },
     }, new PinoInterface());
 
-    const probot = new Probot(options);
+    const options = {
+      id: this._appId,
+      secret: this._secret,
+      privateKey: this._privateKey,
+      catchErrors: false,
+      githubToken: this._githubToken,
+      log,
+    };
+
+    const server = new Server({
+      log: options.log,
+      webhookPath: this._webhookPath,
+      // webhookProxy,
+      Probot: Probot.defaults(options),
+    });
 
     if (this._viewsDirectory.length === 0) {
       this.withViewsDirectory('./views');
     }
-    probot.server.set('views', this._viewsDirectory);
-    probot.log.debug('Set view directory to %s', probot.server.get('views'));
+
+    server.expressApp.set('views', this._viewsDirectory);
+    log.debug('Set view directory to %s', server.expressApp.get('views'));
     const hbsEngine = hbs.create();
-    hbsEngine.localsAsTemplateData(probot.server);
-    probot.server.engine('hbs', hbsEngine.__express);
+    hbsEngine.localsAsTemplateData(server.expressApp);
+    server.expressApp.engine('hbs', hbsEngine.__express);
     // load pkgJson as express local
     try {
-      probot.server.locals.pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
+      server.expressApp.locals.pkgJson = await fse.readJson(path.join(process.cwd(), 'package.json'));
     } catch (e) {
-      probot.log.info('unable to load package.json %s', e);
+      log.info('unable to load package.json %s', e);
     }
 
-    probot.load((app) => {
+    await server.load((app, opts) => {
       this._apps.forEach((handler) => {
-        handler(app, params, options);
+        handler({ app, getRouter: opts.getRouter }, params, options);
       });
     });
 
-    return probot;
+    return server;
   }
 
   create() {
@@ -185,6 +196,8 @@ module.exports = class OpenWhiskWrapper {
       if (!this._privateKey) {
         this._privateKey = params.GH_APP_PRIVATE_KEY || getPrivateKey();
       }
+
+      await this.resolveApps();
 
       // check if the event is triggered via params.
       let { event, eventId, payload } = params;
@@ -215,10 +228,10 @@ module.exports = class OpenWhiskWrapper {
         log.info(`Received event ${eventId} ${event}${payload.action ? (`.${payload.action}`) : ''}`);
       }
 
-      let probot;
+      let probotServer;
       try {
         log.debug('intializing probot...');
-        probot = await this.initProbot(params);
+        probotServer = await this.initProbot(params);
       } catch (e) {
         log.error(`Error while loading probot: ${e.stack || e}`);
         return ERROR;
@@ -232,10 +245,10 @@ module.exports = class OpenWhiskWrapper {
         };
 
         if (delegateRequest) {
-          result = await expressify(probot.server)(params);
+          result = await expressify(probotServer.expressApp)(params);
         } else {
           // let probot handle the event
-          await probot.receive({
+          await probotServer.probotApp.receive({
             name: event,
             payload,
           });

@@ -39,8 +39,8 @@ class ViewsHelper {
   }
 
   init(probot) {
-    const { app } = probot;
-    const router = probot.getRouter();
+    const { app, getRouter } = probot;
+    const router = getRouter();
     Object.keys(this._views).forEach((route) => {
       const view = this._views[route];
       app.log.debug('register view: %s -> %s', route, view);
