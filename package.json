@@ -23,7 +23,7 @@
     "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {
-    "@adobe/helix-log": "4.5.3",
+    "@adobe/helix-log": "5.0.0",
     "@adobe/openwhisk-action-logger": "2.4.0",
     "@adobe/openwhisk-action-utils": "4.4.0",
     "@probot/get-private-key": "1.1.0",
