@@ -1,3 +1,10 @@
+## [4.0.51](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.50...v4.0.51) (2021-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v5.0.3 ([#255](https://github.com/adobe/probot-serverless-openwhisk/issues/255)) ([6db5cda](https://github.com/adobe/probot-serverless-openwhisk/commit/6db5cdaaeebec7ad38777475bcaa8bbaeb093033))
+
 ## [4.0.50](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.49...v4.0.50) (2021-04-03)
 
 
