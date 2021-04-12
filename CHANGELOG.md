@@ -1,3 +1,10 @@
+## [4.0.53](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.52...v4.0.53) (2021-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/openwhisk-action-logger to v2.4.4 ([#257](https://github.com/adobe/probot-serverless-openwhisk/issues/257)) ([f748345](https://github.com/adobe/probot-serverless-openwhisk/commit/f74834535be120d3b720a8c8d71939bfe0278e95))
+
 ## [4.0.52](https://github.com/adobe/probot-serverless-openwhisk/compare/v4.0.51...v4.0.52) (2021-04-12)
 
 
