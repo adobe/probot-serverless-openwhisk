@@ -31,20 +31,20 @@
     "fs-extra": "9.1.0",
     "hbs": "4.1.2",
     "pino": "6.11.3",
-    "probot": "11.1.0"
+    "probot": "11.3.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
-    "ajv": "8.1.0",
-    "codecov": "3.8.1",
-    "eslint": "7.24.0",
+    "ajv": "8.3.0",
+    "codecov": "3.8.2",
+    "eslint": "7.26.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-import": "2.22.1",
     "ghooks": "2.0.4",
     "lint-staged": "10.5.4",
-    "mocha": "8.3.2",
+    "mocha": "8.4.0",
     "nyc": "15.1.0",
     "semantic-release": "17.4.2",
     "smee-client": "1.2.2"
