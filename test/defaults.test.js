@@ -22,6 +22,7 @@ describe('OpenWhisk Wrapper - Defaults', () => {
     // eslint-disable-next-line no-new
     const main = new OpenWhiskWrapper()
       .withGithubPrivateKey('dummy')
+      .withAppId('123')
       .create();
 
     const result = await main({

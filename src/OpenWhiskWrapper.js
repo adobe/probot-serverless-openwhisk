@@ -142,6 +142,7 @@ module.exports = class OpenWhiskWrapper {
       privateKey: this._privateKey,
       catchErrors: false,
       githubToken: this._githubToken,
+      appId: this._appId || 1,
       log,
     };
 
