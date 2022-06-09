@@ -39,7 +39,7 @@ const ERROR = {
  * @param signature the signature of the POST
  * @throws Error if the payload is not valid.
  */
-function validatePayload(secret, payload = '', signature) {
+function validatePayload(secret, payload, signature) {
   if (!signature) {
     throw Error('signature required');
   }
@@ -50,7 +50,7 @@ function validatePayload(secret, payload = '', signature) {
   if (sig.length !== 2) {
     throw Error('invalid signature format.');
   }
-  const signed = crypto.createHmac(sig[0], secret).update(payload, 'utf-8').digest();
+  const signed = crypto.createHmac(sig[0], secret).update(payload || '', 'utf-8').digest();
   if (!crypto.timingSafeEqual(signed, Buffer.from(sig[1], 'hex'))) {
     throw Error('signature not valid.');
   }

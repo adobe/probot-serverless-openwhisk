@@ -1,11 +1,12 @@
 version: 2.1
 executors:
-  node12:
+  node14:
     docker:
-      - image: circleci/node:12
-        environment:
-          NPM_CONFIG_PREFIX: "~/.npm-global"
+      - image: cimg/node:14.19
     working_directory: ~/repo
+
+orbs:
+  codecov: codecov/codecov@3.2.2
 
 commands:
   setup:
@@ -16,7 +17,7 @@ commands:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - run:
           name: install latest npm
-          command: sudo npm -g install npm@
+          command: npm -g install npm@
       - run:
           name: Installing Dependencies
           command: npm install
@@ -30,22 +31,22 @@ commands:
 
 jobs:
   build:
-    executor: node12
+    executor: node14
 
     steps:
       - setup
       - run: mkdir junit
-
-      # test & get code coverage
+      - run:
+          name: Lint
+          command: npm run lint
       - run:
           name: Test and Code Coverage
-          command: npm run test-ci
+          command: npm run test
           environment:
             MOCHA_FILE: junit/test-results.xml
-
+      - codecov/upload
       - store_test_results:
           path: junit
-
       - store_artifacts:
           path: junit
 
