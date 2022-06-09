@@ -3,7 +3,6 @@ executors:
   node14:
     docker:
       - image: cimg/node:14.19
-    working_directory: ~/repo
 
 orbs:
   codecov: codecov/codecov@3.2.2
@@ -17,7 +16,7 @@ commands:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - run:
           name: install latest npm
-          command: npm -g install npm@
+          command: npm -g install npm
       - run:
           name: Installing Dependencies
           command: npm install
@@ -42,8 +41,6 @@ jobs:
       - run:
           name: Test and Code Coverage
           command: npm run test
-          environment:
-            MOCHA_FILE: junit/test-results.xml
       - codecov/upload
       - store_test_results:
           path: junit
